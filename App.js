@@ -14,9 +14,10 @@ import { NavigationContainer } from '@react-navigation/native'
 // import { Ionicons } from '@expo/vector-icons'
 // import { MaterialIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Home from './components/Home'
-import Search from './components/Search'
-import LoginScreen from './components/LoginScreen'
+import Home from './components/home/Home'
+//import Search from './components/Search'
+//import LoginScreen from './components/login/LoginScreen'
+import Filter from './components/filterTab/Filter'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 const Stack = createNativeStackNavigator()
@@ -36,7 +37,7 @@ export default function App () {
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='login'>
-          <Stack.Screen name='login' component={LoginScreen} />
+          <Stack.Screen name='login' component={Filter} />
           <Stack.Screen name='home' component={Home} />
         </Stack.Navigator>
       </NavigationContainer>

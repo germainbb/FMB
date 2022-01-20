@@ -13,7 +13,7 @@ import {
   Alert
 } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
-import { auth } from './firebase'
+import { auth } from '../firebase'
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
