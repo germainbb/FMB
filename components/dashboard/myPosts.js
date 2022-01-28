@@ -10,7 +10,6 @@ import {
   TouchableOpacity
 } from 'react-native'
 //import { FlatList } from 'react-native-gesture-handler'
-import clap from 'fmb/assets/clapping.png'; 
 
 const listTab = [
   { status: 'all' },
@@ -28,41 +27,6 @@ const data = [
   {
     username: 'billionaire',
     name: 'k200',
-    status: 'all'
-  },
-  {
-    username: 'germain',
-    name: 'k500',
-    status: 'green'
-  },
-  {
-    username: 'is',
-    name: 'k100',
-    status: 'purple'
-  },
-  {
-    username: 'billionaire',
-    name: 'k200',
-    status: 'all'
-  },
-  {
-    username: 'germain',
-    name: 'k500',
-    status: 'green'
-  },
-  {
-    username: 'germain',
-    name: 'k500',
-    status: 'green'
-  },
-  {
-    username: 'is',
-    name: 'k100',
-    status: 'purple'
-  },
-  {
-    username: 'billionaire',
-    name: 'k20',
     status: 'all'
   },
   {
@@ -107,7 +71,6 @@ const Filter = () => {
         </View>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <Image style={{width:20, height: 20}} source={clap}/>
         </View>
         <View
           style={[
@@ -156,8 +119,7 @@ const Filter = () => {
         data={datalist}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
-        itemSeparatorComponent={separator} 
-        style={{marginBottom: 110}}
+        itemSeparatorComponent={separator}
       />
     </View>
   )
@@ -205,11 +167,9 @@ const styles = StyleSheet.create({
     height: 120
   },
   itemBody: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
     flex: 1,
     paddingHorizontal: 10,
-    
+    justifyContent: 'center'
   },
   itemName: {
     fontWeight: 'bold',

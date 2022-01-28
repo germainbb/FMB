@@ -37,7 +37,7 @@ export default function App () {
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='login'>
-          <Stack.Screen name='login' component={Filter} />
+          <Stack.Screen name='login' component={Home} />
           <Stack.Screen name='home' component={Home} />
         </Stack.Navigator>
       </NavigationContainer>
