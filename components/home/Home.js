@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import Filter from '../filterTab/Filter'
 import Casual from '../casualDeals/Casual'
 import Shops from '../shops/Shops'
@@ -20,7 +20,9 @@ const AfterLogin = () => {
       initialRouteName='home'
       backBehavior='initialRoute'
       screenOptions={{
-        
+        headerTitleStyle:{
+          justifyContent: 'center',
+        },
         tabBarShowLabel: true,
         tabBarLabelStyle:{
           color: 'darkgreen',
@@ -53,6 +55,12 @@ const AfterLogin = () => {
         name='dashboard'
         component={Dashboard}
         options={{
+          headerRight: () => (
+            <View style={{flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-around',}}>
+            <TouchableOpacity><Ionicons name="pencil" size={24} color="black" style={{marginRight:10}} /></TouchableOpacity>
+            <TouchableOpacity><Ionicons name="add-circle-outline" size={24} color="black" style={{marginRight:10}}/></TouchableOpacity>
+            </View>
+          ),
           tabBarIcon: ({ focused }) => (
             <View>
               <MaterialIcons name='dashboard' size={24} color={focused ? 'orange' : 'black'} />

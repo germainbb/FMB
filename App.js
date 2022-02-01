@@ -36,9 +36,26 @@ export default function App () {
   return (
     <View style={styles.container}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName='login'>
-          <Stack.Screen name='login' component={Home} />
-          <Stack.Screen name='home' component={Home} />
+        <Stack.Navigator 
+        initialRouteName='FMB' 
+        screenOptions={{
+          headerTitleStyle:{
+            marginHorizontal: '7', 
+            
+          }
+        }}>
+          <Stack.Screen 
+          name='FMB' 
+          component={Home} 
+          options={{
+            headerTitleStyle:{
+              margin: 8
+            }
+          }} 
+          />
+          <Stack.Screen 
+          name='home' 
+          component={Home} />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
