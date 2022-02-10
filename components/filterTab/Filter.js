@@ -107,7 +107,8 @@ const Filter = () => {
         </View>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <Image style={{width:20, height: 20}} source={clap}/>
+          <TouchableOpacity><Image style={{width:30, height: 30}} source={clap}/><Text>10m claps</Text></TouchableOpacity>
+          
         </View>
         <View
           style={[
@@ -202,18 +203,19 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: 120,
-    height: 120
+    height: 150
   },
   itemBody: {
     justifyContent: 'space-between',
     flexDirection: 'row',
     flex: 1,
     paddingHorizontal: 10,
-    
+    alignItems: 'center'
   },
   itemName: {
     fontWeight: 'bold',
-    fontSize: 16
+    fontSize: 16,
+    alignItems: 'flex-end'
   },
   itemStatus: {
     backgroundColor: 'green',

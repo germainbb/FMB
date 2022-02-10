@@ -1,7 +1,7 @@
 //import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native'
 //import { createStackNavigator } from '@react-navigation/stack'
-import React, { useState } from 'react'
+import React, {useVisibility } from 'react'
 //import { StyleSheet, View, ImageBackground, Button } from 'react-native'
 //import { NativeBaseProvider } from 'native-base'
 import { NavigationContainer } from '@react-navigation/native'
@@ -20,6 +20,7 @@ import Home from './components/home/Home'
 import Filter from './components/filterTab/Filter'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
+
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
@@ -33,16 +34,18 @@ const AfterLogin = () => {
 }
 
 export default function App () {
+  
+
   return (
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator 
         initialRouteName='FMB' 
         screenOptions={{
-          headerTitleStyle:{
-            marginHorizontal: '7', 
-            
-          }
+          headerStyle:{
+            backgroundColor: 'orange'
+          },
+          headerTitleAlign: 'center'
         }}>
           <Stack.Screen 
           name='FMB' 
