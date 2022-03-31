@@ -15,11 +15,13 @@ import { NavigationContainer } from '@react-navigation/native'
 // import { MaterialIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Home from './components/home/Home'
+import Save from './components/dashboard/Save'
 //import Search from './components/Search'
 //import LoginScreen from './components/login/LoginScreen'
 import Filter from './components/filterTab/Filter'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-
+import {store} from './reduxTK/store/Index'
+import { Provider } from 'react-redux'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -37,6 +39,7 @@ export default function App () {
   
 
   return (
+    <Provider store={store}>
     <View style={styles.container}>
       <NavigationContainer>
         <Stack.Navigator 
@@ -61,7 +64,7 @@ export default function App () {
           component={Home} />
         </Stack.Navigator>
       </NavigationContainer>
-    </View>
+    </View></Provider>
   )
 }
 

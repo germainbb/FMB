@@ -14,6 +14,11 @@ import {
 } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 import { auth } from '../firebase'
+import {
+  collection,
+  addDoc
+} from 'firebase/firestore'
+import { db } from '../firebase'
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('')
@@ -33,12 +38,20 @@ const LoginScreen = () => {
       })
   }
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         console.log('signed in')
         const user = userCredential.user
         console.log(user)
+        await addDoc(collection(db, 'users'), {
+          email: email
+        })
+        .then(() => console.log('this is the email'))
+        .catch(() => {
+          console.log('rejected')
+        })
+
         navigation.navigate('home');
       })
       .catch(error => {

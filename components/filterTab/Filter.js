@@ -21,51 +21,50 @@ const listTab = [
 ]
 const data = [
   {
+    profileImage: '',
+    caption: '',
     username: 'is',
     name: 'k1000',
     status: 'purple'
   },
   {
+    profileImage: '',
+    caption: '',
     username: 'billionaire',
     name: 'k200',
     status: 'all'
   },
   {
+    profileImage: '',
+    caption: '',
     username: 'germain',
     name: 'k500',
     status: 'green'
   },
-  {
+  {    
+    profileImage: '',
+    caption: '',
     username: 'is',
     name: 'k100',
     status: 'purple'
   },
   {
+    profileImage: '',
+    caption: '',
     username: 'billionaire',
     name: 'k200',
     status: 'all'
   },
   {
+    profileImage: '',
+    caption: '',
     username: 'germain',
     name: 'k500',
     status: 'green'
   },
   {
-    username: 'germain',
-    name: 'k500',
-    status: 'green'
-  },
-  {
-    username: 'is',
-    name: 'k100',
-    status: 'purple'
-  },
-  {
-    username: 'billionaire',
-    name: 'k20',
-    status: 'all'
-  },
-  {
+    profileImage: '',
+    caption: '',
     username: 'germain',
     name: 'k500',
     status: 'green'

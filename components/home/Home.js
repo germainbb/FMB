@@ -23,10 +23,12 @@ const AfterLogin = () => {
       initialRouteName='home'
       backBehavior='initialRoute'
       screenOptions={{
+        tabBarHideOnKeyboard: true, 
         headerTitleStyle:{
           justifyContent: 'center',
         },
         tabBarShowLabel: true,
+        headerShown: false,
         tabBarLabelStyle:{
           color: 'darkgreen',
           marginBottom:5
