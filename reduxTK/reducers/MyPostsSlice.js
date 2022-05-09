@@ -10,33 +10,10 @@ export const counterSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    user: (state, action) => {
-      return {
-        ...state,
-        currentUser: action.currentUser
-      }
+    fetchUserPosts: (state, action) => {
+      state.myPosts = action.payload
     },
-    fetchUser: (state, action) => {
-
-      const user = auth.currentUser.uid
-      const docRef = doc(db, "users", user);
-      const q = query(docRef, orderBy('timeStamp', 'desc'))
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        onSnapshot(q, (snapshot) => {
-
-        })
-        console.log("Document data:", docSnap.data());
-      } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-      }
-      return {
-        ...state,
-        currentUser: action.currentUser
-      }
-    },
-    decrement: state => {
+    deletePost: state => {
       state.value -= 1
     },
     incrementByAmount: (state, action) => {

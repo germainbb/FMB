@@ -14,13 +14,14 @@ import * as ImagePicker from 'expo-image-picker'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { storage } from '../firebase'
+import { updateCurrentUser } from 'firebase/auth'
 //import rav4 from 'fmb/assets/rav4prime.jpg'; 
 
 
 
 const Stack = createNativeStackNavigator()
 
-const Dashboard = ({ navigation }) => {
+const Dashboard = ({ navigation },props) => {
   const [hasPermission, setHasPermission] = useState(null)
   const [type, setType] = useState(Camera.Constants.Type.back)
   const [camera, setCamera] = useState(null)
@@ -152,6 +153,7 @@ const Dashboard = ({ navigation }) => {
         title= 'upload'
         onPress={uploadImg}
       />
+      <Text>{currentUser.name}</Text>
       <Text>uploaded  {progress}</Text>  
       
     </View>

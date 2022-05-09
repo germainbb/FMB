@@ -1,7 +1,7 @@
 //import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native'
 //import { createStackNavigator } from '@react-navigation/stack'
-import React, {useVisibility } from 'react'
+import React, { useVisibility } from 'react'
 //import { StyleSheet, View, ImageBackground, Button } from 'react-native'
 //import { NativeBaseProvider } from 'native-base'
 import { NavigationContainer } from '@react-navigation/native'
@@ -20,8 +20,9 @@ import Save from './components/dashboard/Save'
 //import LoginScreen from './components/login/LoginScreen'
 import Filter from './components/filterTab/Filter'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import {store} from './reduxTK/store/Index'
+import { store } from './reduxTK/store/Index'
 import { Provider } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -36,35 +37,33 @@ const AfterLogin = () => {
 }
 
 export default function App () {
-  
-
   return (
     <Provider store={store}>
-    <View style={styles.container}>
-      <NavigationContainer>
-        <Stack.Navigator 
-        initialRouteName='FMB' 
-        screenOptions={{
-          headerStyle:{
-            backgroundColor: 'orange'
-          },
-          headerTitleAlign: 'center'
-        }}>
-          <Stack.Screen 
-          name='FMB' 
-          component={Home} 
-          options={{
-            headerTitleStyle:{
-              margin: 8
-            }
-          }} 
-          />
-          <Stack.Screen 
-          name='home' 
-          component={Home} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </View></Provider>
+      <View style={styles.container}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName='FMB'
+            screenOptions={{
+              headerStyle: {
+                backgroundColor: 'orange'
+              },
+              headerTitleAlign: 'center'
+            }}
+          >
+            <Stack.Screen
+              name='FMB'
+              component={Home}
+              options={{
+                headerTitleStyle: {
+                  margin: 8
+                }
+              }}
+            />
+            <Stack.Screen name='home' component={Home} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </View>
+    </Provider>
   )
 }
 

@@ -1,43 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {auth } from '../firebase'
-import { doc, getDoc } from "firebase/firestore";
 
 const initialState = {
-  currentUser: null
+  currentUser: null,
+  posts: [],
 }
 
 export const counterSlice = createSlice({
   name: 'user',
-  initialState,
+  initialState: {
+    currentUser: null
+  },
   reducers: {
+    fetchuser: (state, action) => {
+      
+      state.currentUser = action.payload;
+    
+    },
     user: (state, action) => {
-      return {
-        ...state,
-        currentUser: action.currentUser
-      }
+      
+      state.posts.values = action.posts;
     },
-    fetchUser: (state, action) => {
-
-      const user = auth.currentUser.uid
-      const docRef = doc(db, "users", user);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-      } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-      }
-      return {
-        ...state,
-        currentUser: action.currentUser
-      }
+    clearData: () => {
+      return initialState
     },
-    decrement: state => {
-      state.value -= 1
-    },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload
-    }
+    // incrementByAmount: (state, action) => {
+    //   state.value += action.payload
+    // }
   }
 })
 
