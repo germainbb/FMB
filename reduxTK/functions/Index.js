@@ -68,7 +68,7 @@ export const fetchLikes = (uid, postId) => {
 
 // }
 export const deletePost = (item) => {
-
+  await deleteDoc(doc(db, "cities", "DC"));
 }
 export const fetchAllPosts = () => {
   
