@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
+  ScrollView,
   StyleSheet,
   Button,
   Text,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  Pressable,
+  TextInput,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
@@ -104,13 +105,13 @@ const Add = ({ navigation }, props) => {
   };
 
   return (
-    <View style={{ flexDirection: "column", flex: 1, bottom: 90 }}>
+    <ScrollView style={{ flexDirection: "column", flex: 1, bottom: 90 }}>
       <View style={styles.container}>
         <Camera
           ref={(ref) => setCamera(ref)}
           style={styles.camera}
           type={type}
-          ratio={"1:1"}
+          ratio={"1:2"}
         >
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -148,9 +149,12 @@ const Add = ({ navigation }, props) => {
         />
       )}
       <Button style={{ bottom: 600 }} title="upload" onPress={uploadImg} />
-      {/*<Text>{currentUser.name}</Text>*/}
-      <Text>uploaded {progress}</Text>
-    </View>
+      {/*POST DETAILS*/}
+      <TextInput placeholder="NAME" />
+      <TextInput placeholder="PRICE" />
+      <TextInput placeholder="SHORT DESCRIPTION" />
+      <TextInput placeholder="PHONE NO" />
+    </ScrollView>
   );
 };
 
