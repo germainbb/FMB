@@ -9,6 +9,8 @@ import {
   Image,
   Alert,
   TextInput,
+  Dimensions,
+  Pressable,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
@@ -16,7 +18,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../firebase";
 import { updateCurrentUser } from "firebase/auth";
-//import rav4 from 'fmb/assets/rav4prime.jpg';
+import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+
+const { width, height } = Dimensions.get("window");
 
 const Stack = createNativeStackNavigator();
 
@@ -105,13 +110,13 @@ const Add = ({ navigation }, props) => {
   };
 
   return (
-    <ScrollView style={{ flexDirection: "column", flex: 1, bottom: 90 }}>
+    <ScrollView style={{ bottom: 1 }}>
       <View style={styles.container}>
         <Camera
           ref={(ref) => setCamera(ref)}
           style={styles.camera}
           type={type}
-          ratio={"1:2"}
+          ratio={"5:5"}
         >
           <View style={styles.buttonContainer}>
             <TouchableOpacity
@@ -124,63 +129,137 @@ const Add = ({ navigation }, props) => {
                 );
               }}
             >
-              <Text style={styles.text}> Flip </Text>
+              <MaterialIcons
+                name="flip-camera-android"
+                size={30}
+                color="gray"
+              />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={takePicture}>
-              <Text style={styles.text}> Capture </Text>
+            <TouchableOpacity
+              style={{
+                display: "flex",
+                flex: 1,
+                alignSelf: "flex-end",
+                right: 10,
+              }}
+              onPress={takePicture}
+            >
+              <MaterialIcons name="camera" size={60} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={pickImage}>
-              <Text style={[styles.text, { color: "darkblue" }]}>
-                Pick an image
-              </Text>
+              <FontAwesome name="file-image-o" size={30} color="gray" />
             </TouchableOpacity>
           </View>
         </Camera>
       </View>
-      <Button
-        style={{ bottom: 600 }}
-        title="save"
-        onPress={() => navigation.navigate("save", { image })}
-      />
       {image && (
         <Image
           source={{ uri: image }}
-          style={{ backgroundColor: "black", flex: 1 }}
+          style={{
+            backgroundColor: "black",
+            flex: 1,
+            height: height * 0.5,
+            width: width,
+            marginTop: 3,
+          }}
         />
       )}
-      <Button style={{ bottom: 600 }} title="upload" onPress={uploadImg} />
       {/*POST DETAILS*/}
-      <TextInput placeholder="NAME" />
-      <TextInput placeholder="PRICE" />
-      <TextInput placeholder="SHORT DESCRIPTION" />
-      <TextInput placeholder="PHONE NO" />
+      <View>
+        <TextInput
+          placeholder="NAME"
+          style={{
+            borderColor: "red",
+            borderBottomWidth: 5,
+            padding: 6,
+            margin: 6,
+          }}
+        />
+        <TextInput
+          placeholder="PRICE"
+          style={{
+            borderColor: "red",
+            borderBottomWidth: 5,
+            padding: 6,
+            margin: 6,
+          }}
+        />
+        <TextInput
+          placeholder="SHORT DESCRIPTION"
+          style={{
+            borderColor: "red",
+            borderBottomWidth: 5,
+            padding: 6,
+            margin: 6,
+          }}
+        />
+        <TextInput
+          placeholder="PHONE NO"
+          style={{
+            borderColor: "red",
+            borderBottomWidth: 5,
+            padding: 6,
+            margin: 6,
+          }}
+        />
+      </View>
+      <View style={{ justifyContent: "center" }}>
+        <Pressable
+          onPress={() => navigation.navigate("save", { image })}
+          style={{
+            display: "flex",
+            width: 50,
+            justifyItems: "center",
+            backgroundColor: "skyblue",
+            borderRadius: 5,
+          }}
+        >
+          <Text style={{}}>POST</Text>
+        </Pressable>
+      </View>
+      <View style={{ marginBottom: 65 }}>
+        <Text>
+          YOU CAN WRITE IN ENGLISH OR NYANJA, BUT WE RECOMMEND ENGLISH.{"\n "}
+          POST CLEAR PICTURES TO ATTRACT MORE CUSTOMERS.{"\n "}NO IMMORAL
+          PICTURES PLEASE.
+          {"\n "}
+          EXPAND YOUR BUSINESS!!
+        </Text>
+      </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  textinput: {
+    borderColor: "gray",
+    backgroundColor: "green",
+  },
   container: {
+    display: "flex",
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     //height: 500
   },
   camera: {
     backgroundColor: "black",
     flex: 1,
-    aspectRatio: 1,
-    //flexDirection:'row'
+    aspectRatio: 0.9,
   },
   buttonContainer: {
     flex: 1,
+    justifyContent: "space-between",
     backgroundColor: "transparent",
     flexDirection: "row",
     margin: 20,
-    bottom: 60,
+    bottom: 30,
     left: 35,
   },
   button: {
+    display: "flex",
     flex: 1,
     alignSelf: "flex-end",
+    margin: 10,
     //alignItems: 'center',
   },
   text: {

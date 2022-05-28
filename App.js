@@ -23,6 +23,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 //import { store } from "./reduxTK/store/Index";
 import { Provider } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
+import Arrange from "./components/dashboard/Arrange";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,9 +45,12 @@ export default function App() {
           initialRouteName="FMB"
           screenOptions={{
             headerStyle: {
+              display: "flex",
+              flexDirection: "row",
               backgroundColor: "orange",
             },
-            headerTitleAlign: "center",
+            headerTitleAlign: "flex-start",
+            headerRight: () => <Arrange />,
           }}
         >
           <Stack.Screen
