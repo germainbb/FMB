@@ -203,27 +203,41 @@ const Add = ({ navigation }, props) => {
           }}
         />
       </View>
-      <View style={{ justifyContent: "center" }}>
+      <View style={{ justifyContent: "center", display: "flex" }}>
         <Pressable
-          onPress={() => navigation.navigate("save", { image })}
+          onPress={() => navigation.navigate("home", { image })}
           style={{
             display: "flex",
-            width: 50,
-            justifyItems: "center",
-            backgroundColor: "skyblue",
+            //width: 50,
+            justifyContent: "center",
+
             borderRadius: 5,
           }}
         >
-          <Text style={{}}>POST</Text>
+          <Text
+            style={{
+              display: "flex",
+              height: height * 0.09,
+              width: width * 0.6,
+              backgroundColor: "skyblue",
+              borderRadius: 9,
+              alignSelf: "center",
+              padding: 9,
+              fontSize: 30,
+              paddingLeft: "20%",
+            }}
+          >
+            POST
+          </Text>
         </Pressable>
       </View>
       <View style={{ marginBottom: 65 }}>
-        <Text>
-          YOU CAN WRITE IN ENGLISH OR NYANJA, BUT WE RECOMMEND ENGLISH.{"\n "}
-          POST CLEAR PICTURES TO ATTRACT MORE CUSTOMERS.{"\n "}NO IMMORAL
+        <Text style={{ padding: 6 }}>
+          .YOU CAN WRITE IN ENGLISH OR NYANJA, BUT WE RECOMMEND ENGLISH.{"\n "}
+          .POST CLEAR PICTURES TO ATTRACT MORE CUSTOMERS.{"\n "}.NO IMMORAL
           PICTURES PLEASE.
           {"\n "}
-          EXPAND YOUR BUSINESS!!
+          .EXPAND YOUR BUSINESS!!
         </Text>
       </View>
     </ScrollView>

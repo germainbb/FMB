@@ -11,6 +11,7 @@ import React from "react";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -67,6 +68,14 @@ const myposts = [
 ];
 
 export default function Dashboard() {
+  const navigation = useNavigation();
+  const addScreen = () => {
+    navigation.navigate("add");
+  };
+  const editScreen = () => {
+    navigation.navigate("edit");
+  };
+
   const RenderItem = ({ item, index }) => {
     return (
       <View style={styles.itemContainer}>
@@ -114,11 +123,13 @@ export default function Dashboard() {
           NAME OF BUSINESS
         </Text>
         <TouchableOpacity
+          onPress={editScreen}
           style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
         >
           <SimpleLineIcons name="pencil" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity
+          onPress={addScreen}
           style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
         >
           <Ionicons name="add-sharp" size={30} color="black" />

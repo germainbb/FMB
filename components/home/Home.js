@@ -7,21 +7,196 @@ import {
   Pressable,
   TouchableOpacity,
   Modal,
+  Dimensions,
 } from "react-native";
 import Filter from "../filterTab/Filter";
 import Casual from "../casualDeals/Casual";
 import Shops from "../shops/Shops";
 import Dashboard from "../dashboard/Dashboard";
+import myPosts from "../dashboard/myPosts";
 import Search from "../search/Search";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import Add from "../dashboard/Add";
-
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Edit from "../dashboard/Edit";
+import Contact from "../dashboard/Contact";
+import Workers from "../Workers/Workers";
+import { createStackNavigator } from "@react-navigation/stack";
 
+const { width, height } = Dimensions.get("window");
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const Dash = () => {
+  return (
+    <Stack.Navigator initialRouteName="dashboard">
+      <Stack.Screen
+        name="dashboard"
+        component={Dashboard}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="add"
+        component={Add}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="edit"
+        component={Edit}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="contact"
+        component={Contact}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+const Homer = () => {
+  return (
+    <Stack.Navigator initialRouteName="homer">
+      <Stack.Screen
+        name="homer"
+        component={Filter}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="myposts1"
+        component={myPosts}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="contact1"
+        component={Contact}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+const Shop = () => {
+  return (
+    <Stack.Navigator initialRouteName="Shops">
+      <Stack.Screen
+        name="Shops"
+        component={Shops}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="myposts2"
+        component={myPosts}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="contact2"
+        component={Contact}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+const Meetup = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="meetup"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+      }}
+    >
+      <Stack.Screen
+        name="meetup"
+        component={Casual}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="myposts3"
+        component={myPosts}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="contact3"
+        component={Contact}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+const Worker = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="Workers"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+      }}
+    >
+      <Stack.Screen
+        name="Workers"
+        component={Workers}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="myposts4"
+        component={myPosts}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="contact4"
+        component={Contact}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
 
 const AfterLogin = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,13 +227,13 @@ const AfterLogin = () => {
       }}
     >
       <Tab.Screen
-        name="search"
-        component={Search}
+        name="workers"
+        component={Worker}
         options={{
           tabBarIcon: ({ focused }) => (
             <View>
-              <Ionicons
-                name="search"
+              <MaterialIcons
+                name="work"
                 size={25}
                 color={focused ? "orange" : "black"}
               />
@@ -67,8 +242,8 @@ const AfterLogin = () => {
         }}
       />
       <Tab.Screen
-        name="dashboard"
-        component={Add}
+        name="Dashboard"
+        component={Dash}
         options={{
           headerRight: () => (
             <View
@@ -79,28 +254,6 @@ const AfterLogin = () => {
                 justifyContent: "space-around",
               }}
             >
-              <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                  Alert.alert("Modal has been closed.");
-                  setModalVisible(!modalVisible);
-                }}
-              >
-                <View style={styles.centeredView}>
-                  <View style={styles.modalView}>
-                    <Text style={styles.modalText}>upload image </Text>
-                    <TextInput>price:</TextInput>
-                    <Pressable
-                      style={[styles.button, styles.buttonClose]}
-                      onPress={() => setModalVisible(!modalVisible)}
-                    >
-                      <Text style={styles.textStyle}>Hide Modal</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              </Modal>
               <TouchableOpacity>
                 <Ionicons
                   name="pencil"
@@ -133,7 +286,7 @@ const AfterLogin = () => {
 
       <Tab.Screen
         name="home"
-        component={Filter}
+        component={Homer}
         options={{
           tabBarIcon: ({ focused }) => (
             <View>
@@ -148,7 +301,7 @@ const AfterLogin = () => {
       />
       <Tab.Screen
         name="shops"
-        component={Shops}
+        component={Shop}
         options={{
           tabBarIcon: ({ focused }) => (
             <View>
@@ -162,8 +315,8 @@ const AfterLogin = () => {
         }}
       />
       <Tab.Screen
-        name="meetup"
-        component={Casual}
+        name="meetups"
+        component={Meetup}
         options={{
           tabBarIcon: ({ focused }) => (
             <View>
@@ -184,50 +337,6 @@ function Home({ navigation }) {
   return <AfterLogin />;
 }
 
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    backgroundColor: "black",
-    alignItems: "center",
-    marginTop: "70%",
-    width: "80%",
-    left: "10%",
-    bottom: "15%",
-  },
-  modalView: {
-    backgroundColor: "white",
-    //   borderRadius: 20,
-    //   padding: 35,
-    //   alignItems: "center",
-    //   shadowColor: "darkorange",
-    //   shadowOffset: {
-    //     width: 0,
-    //     height: 50
-    //   },
-    //   shadowOpacity: 0.25,
-    //   shadowRadius: 4,
-    //   elevation: 5
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
-});
+const styles = StyleSheet.create({});
 
 export default Home;

@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const listTab = [
   { status: "all" },
@@ -72,6 +73,12 @@ const data = [
 const Filter = () => {
   const [status, setstatus] = useState("all");
   const [datalist, setDatalist] = useState(data);
+
+  const navigation = useNavigation();
+  const personalScreen = () => {
+    navigation.navigate("myposts1");
+  };
+
   const setstatusFilter = (status) => {
     if (status !== "all") {
       //purple and green
@@ -93,14 +100,14 @@ const Filter = () => {
           />
           <Text>shoprite</Text>
         </View>
-        <View style={styles.itemLogo}>
+        <TouchableOpacity onPress={personalScreen} style={styles.itemLogo}>
           <Image
             style={styles.itemImage}
             source={{
               uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
             }}
           />
-        </View>
+        </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
           <TouchableOpacity>

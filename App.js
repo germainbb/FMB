@@ -24,20 +24,28 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Provider } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import Arrange from "./components/dashboard/Arrange";
+//import { useFonts, Nunito_300Light } from "@expo-google-fonts/Nunito";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const AfterLogin = () => {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={Home} />
-      <Tab.Screen name="Settings" component={Search} />
-    </Tab.Navigator>
-  );
-};
+// const AfterLogin = () => {
+//   return (
+//     <Tab.Navigator>
+//       <Tab.Screen name="Home" component={Home} />
+//       <Tab.Screen name="Settings" component={Search} />
+//     </Tab.Navigator>
+//   );
+// };
 
 export default function App() {
+  // const [fontsLoaded] = useFonts({
+  //   nunito: require("../assets/Nunito_300Light.ttf"),
+  // });
+
+  // if (!fontsLoaded) {
+  //   return null;
+  // } else {
   return (
     <View style={styles.container}>
       <NavigationContainer>
@@ -62,7 +70,7 @@ export default function App() {
               },
             }}
           />
-          <Stack.Screen name="home" component={Home} />
+          {/* <Stack.Screen name="home" component={Home} /> */}
         </Stack.Navigator>
       </NavigationContainer>
     </View>
@@ -73,5 +81,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     flex: 1,
+    //fontFamily: "Nunito_300Light",
   },
 });
