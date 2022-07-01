@@ -102,6 +102,7 @@ const Filter = () => {
         </View>
         <TouchableOpacity onPress={personalScreen} style={styles.itemLogo}>
           <Image
+           resizeMode="contain"
             style={styles.itemImage}
             source={{
               uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",

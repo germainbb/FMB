@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -79,6 +80,7 @@ const Filter = () => {
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <View style={styles.itemLogo}>
             <Image
+              resizeMode="contain"
               style={styles.itemImage}
               source={{
                 uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
@@ -154,18 +156,49 @@ const Filter = () => {
           setModalVisible(!modalVisible);
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>upload image </Text>
-            <TextInput>price:</TextInput>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={onSubmit}
-            >
-              <Text style={styles.textStyle}>Hide Modal</Text>
-            </Pressable>
+        <ScrollView>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                style={{ marginLeft: width * 0.5, bottom: 10 }}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <FontAwesome name="times" size={30} color="black" />
+              </TouchableOpacity>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={{
+                  uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+                }}
+              />
+              <View style={styles.itembody}>
+                <Text style={styles.itemPrice}>K30,00</Text>
+                <TouchableOpacity style={{ left: width * 0.19 }}>
+                  <Feather name="heart" size={24} color="skyblue" />
+                  <Text>10m</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.modalText}>name of object </Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                description frtew hhhfhhfd uhudhfisbs ucduhussigdhhfyrjuu
+                fgrhyhsgd tuqwerty qwerty lorem ipsum hejddjfsj hejddjfsjfgda
+                fnc ddhdhsj hfhh righth germainge germain germain germain
+              </Text>
+              <View style={styles.contact}>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={onSubmit}
+                >
+                  <Text style={styles.textStyle}>seller details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{ flex: 1, left: width * 0.18 }}>
+                  <FontAwesome name="whatsapp" size={45} color="green" />
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </Modal>
     </View>
   );
@@ -174,6 +207,23 @@ const Filter = () => {
 export default Filter;
 
 const styles = StyleSheet.create({
+  image: {
+    width: width * 0.6,
+    height: height * 0.45,
+  },
+  itembody: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  itemPrice: {
+    fontWeight: "bold",
+    right: width * 0.19,
+  },
+  contact: {
+    flexDirection: "row",
+    display: "flex",
+    top: 6,
+  },
   listTab: {
     flexDirection: "row",
     alignSelf: "center",
@@ -210,12 +260,14 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: 120,
-    height: 120,
+    height: 140,
   },
   itemBody: {
     flex: 1,
     paddingHorizontal: 10,
-    justifyContent: "center",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
   },
   itemName: {
     fontWeight: "bold",
@@ -240,6 +292,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     elevation: 2,
+    flex: 1,
   },
   buttonOpen: {
     backgroundColor: "#F194FF",
@@ -255,6 +308,7 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: "center",
+    fontWeight: "bold",
   },
   centeredView: {
     flex: 1,
@@ -266,6 +320,7 @@ const styles = StyleSheet.create({
     bottom: "15%",
   },
   modalView: {
+    display: "flex",
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
