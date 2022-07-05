@@ -26,6 +26,8 @@ import Contact from "../dashboard/Contact";
 import Workers from "../Workers/Workers";
 import { createStackNavigator } from "@react-navigation/stack";
 import MyPager from "../dashboard/MyPager";
+import Carousel from "../dashboard/Carousel";
+import { Entypo } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 const Tab = createBottomTabNavigator();
@@ -181,7 +183,7 @@ const Worker = () => {
     >
       <Stack.Screen
         name="Workers"
-        component={MyPager}
+        component={Workers}
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -228,13 +230,28 @@ const AfterLogin = () => {
           position: "absolute",
           bottom: 5,
           borderRadius: 10,
-          width: "90%",
-          left: 20,
+          width: "100%",
+          marginHorizontal: 5,
           height: 65,
           opacity: 0.6,
         },
       }}
     >
+      <Tab.Screen
+        name="promotions"
+        component={MyPager}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View>
+              <Entypo
+                name="megaphone"
+                size={25}
+                color={focused ? "orange" : "black"}
+              />
+            </View>
+          ),
+        }}
+      />
       <Tab.Screen
         name="workers"
         component={Worker}
@@ -254,33 +271,6 @@ const AfterLogin = () => {
         name="Dashboard"
         component={Dash}
         options={{
-          headerRight: () => (
-            <View
-              style={{
-                flexDirection: "row",
-                flex: 1,
-                alignItems: "center",
-                justifyContent: "space-around",
-              }}
-            >
-              <TouchableOpacity>
-                <Ionicons
-                  name="pencil"
-                  size={24}
-                  color="black"
-                  style={{ marginRight: 10 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(true)}>
-                <Ionicons
-                  name="add-circle-outline"
-                  size={24}
-                  color="black"
-                  style={{ marginRight: 10 }}
-                />
-              </TouchableOpacity>
-            </View>
-          ),
           tabBarIcon: ({ focused }) => (
             <View>
               <MaterialIcons
@@ -301,7 +291,7 @@ const AfterLogin = () => {
             <View>
               <AntDesign
                 name="home"
-                size={24}
+                size={35}
                 color={focused ? "orange" : "black"}
               />
             </View>
@@ -331,6 +321,21 @@ const AfterLogin = () => {
             <View>
               <Ionicons
                 name="md-people-sharp"
+                size={25}
+                color={focused ? "orange" : "black"}
+              />
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="search"
+        component={Search}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View>
+              <Ionicons
+                name="search"
                 size={25}
                 color={focused ? "orange" : "black"}
               />

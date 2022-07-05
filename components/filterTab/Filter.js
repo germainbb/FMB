@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Carousel from "../dashboard/Carousel";
 
 const listTab = [
   { status: "all" },
@@ -158,13 +159,16 @@ const Filter = () => {
           ))}
         </View>
       </ScrollView>
+      
       <FlatList
+        ListHeaderComponent={<Carousel/>}
         numColumns={2}
         data={datalist}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
         style={{ marginBottom: 110 }}
+        refreshing={true}
       />
     </View>
   );

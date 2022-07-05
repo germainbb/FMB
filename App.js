@@ -36,26 +36,25 @@ import Arrange from "./components/dashboard/Arrange";
 //import { useFonts, Nunito_300Light } from "@expo-google-fonts/Nunito";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get("window");
 
-// const AfterLogin = () => {
-//   return (
-//     <Tab.Navigator>
-//       <Tab.Screen name="Home" component={Home} />
-//       <Tab.Screen name="Settings" component={Search} />
-//     </Tab.Navigator>
-//   );
-// };
+const Drawer = createDrawerNavigator();
+
+function MyDrawer() {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen name="Find My Business" component={Home} />
+      
+    </Drawer.Navigator>
+  );
+}
 
 export default function App() {
-  //const navigation = useNavigation();
-  const promotions = () => {
-    //navigation.navigate("MyPager");
-    Alert.alert("hello", "working");
-  };
+  
 
   return (
     <View style={styles.container}>
@@ -63,41 +62,21 @@ export default function App() {
         <Stack.Navigator
           initialRouteName="FMB"
           screenOptions={{
+            headerShown:false,
             headerStyle: {
               display: "flex",
               flexDirection: "row",
               backgroundColor: "orange",
             },
-            headerTitleAlign: "flex-start",
-            headerRight: () => (
-              <View style={{ display: "flex", flexDirection: "row" }}>
-                <TouchableOpacity style={{ display: "flex", right: 8 }}>
-                  <Feather name="search" size={24} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={promotions}>
-                  <Text style={{ fontSize: 18 }}>promotions</Text>
-                </TouchableOpacity>
-              </View>
-            ),
+            headerTitleAlign: "center",
           }}
         >
           <Stack.Screen
             name="FMB"
-            component={Home}
+            component={MyDrawer}
             options={{
               headerTitleStyle: {
                 margin: 8,
-              },
-            }}
-          />
-          <Stack.Screen
-            name="promotions"
-            component={MyPager}
-            options={{
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: "#deb887",
-                height: height * 0.06,
               },
             }}
           />

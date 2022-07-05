@@ -1,89 +1,97 @@
-import { View, Image,Text, Dimensions, StyleSheet } from 'react-native'
-import React,{useState} from 'react'
-import { FlatList } from 'react-native-gesture-handler'
-import Animated,{interpolate,Extrapolate,useSharedValue, event } from 'react-native-reanimated'
+import React from "react";
+import { Text, Dimensions, StyleSheet, View, Image } from "react-native";
+import { SwiperFlatList } from "react-native-swiper-flatlist";
 
-const srcwidth = Dimensions.get("window").width
-const cardLength = srcwidth*0.8
-const spacing = srcwidth*0.02
-const sidecardLength = (srcwidth*0.18)/2
-
-
-
-
-
-const MyPager = ({navigation}) => {
-  const [scrollx, setscrollx] = useState(0)
-
-  function Item({index}){
-    const size = useSharedValue(0.8)
-  
-    const inputRange = [
-      (index -1)*cardLength,
-      index*cardLength,
-      (index + 1) * cardLength
-    ]
-    size.value = interpolate(
-      scrollx,
-      inputRange,
-      [0.8,1,0.8],
-      Extrapolate.CLAMP
-    )
-  
-    return(
-      <View style={[styles.card, {
-        marginLeft: index == 0 ? sidecardLength : spacing,
-        marginRight: index == 2 ? sidecardLength : spacing,
-      }]}>
-        <Image 
-          resizeMode='contain'
-          source={require("../../assets/clapping.png")}
-          style={{width: "100%", height: "100%", backgroundColor:"lightblue"}}
+const MyPager = () => (
+  <View style={styles.container}>
+    <SwiperFlatList index={2} showPagination>
+      <View style={[styles.child, { backgroundColor: "tomato" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
         />
       </View>
-    )
-  }
+      <View style={[styles.child, { backgroundColor: "thistle" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+      <View style={[styles.child, { backgroundColor: "skyblue" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+      <View style={[styles.child, { backgroundColor: "teal" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+      <View style={[styles.child, { backgroundColor: "teal" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+      <View style={[styles.child, { backgroundColor: "teal" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+      <View style={[styles.child, { backgroundColor: "teal" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+      <View style={[styles.child, { backgroundColor: "teal" }]}>
+        <Image
+          resizeMode="contain"
+          style={styles.itemImage}
+          source={{
+            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+          }}
+        />
+      </View>
+    </SwiperFlatList>
+  </View>
+);
 
-  const Data = [
-    {
-      id: "1",
-      title: "first"
-    },
-    {
-      id: "2",
-      title: "second"
-    },
-    {
-      id: "3",
-      title: "third"
-    },
-  ]
-
-  return (
-    <View>
-      <FlatList
-        data={Data}
-        horizontal={true}
-        renderItem={({index, item})=>{
-          return(
-            <Item index={index} scrollx={scrollx}/>
-          )
-        }}
-        keyExtractor={(item) => item.id}
-        onScroll={(event)=> {
-          setscrollx(event.nativeEvent.contentOffset.x)
-        }}
-      />
-    </View>
-  )
-}
+const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
-  card: {
-    width: cardLength,
-    height: 150,
-    overflow: "hidden",
-  }
+  container: { backgroundColor: "white", flex: 1, bottom: 70 },
+  child: { width, justifyContent: "center" },
+  text: { fontSize: width * 0.1, textAlign: "center" },
+  itemImage: {
+    width: width,
+    height: height * 0.7,
+    top: height * 0.04,
+  },
 });
 
-export default MyPager
+export default MyPager;
