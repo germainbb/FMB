@@ -20,6 +20,7 @@ import { storage } from "../firebase";
 import { updateCurrentUser } from "firebase/auth";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
 
 const { width, height } = Dimensions.get("window");
 
@@ -31,6 +32,7 @@ const Add = ({ navigation }, props) => {
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [selectedLanguage, setSelectedLanguage] = useState();
 
   const cam = useRef().current;
 
@@ -167,7 +169,7 @@ const Add = ({ navigation }, props) => {
       {/*POST DETAILS*/}
       <View>
         <TextInput
-          placeholder="NAME"
+          placeholder="example(SHOES or DRESS)"
           style={{
             borderColor: "red",
             borderBottomWidth: 5,
@@ -176,7 +178,8 @@ const Add = ({ navigation }, props) => {
           }}
         />
         <TextInput
-          placeholder="PRICE"
+          keyboardType="number-pad"
+          placeholder="PRICE IN KWACHA"
           style={{
             borderColor: "red",
             borderBottomWidth: 5,
@@ -185,7 +188,7 @@ const Add = ({ navigation }, props) => {
           }}
         />
         <TextInput
-          placeholder="SHORT DESCRIPTION"
+          placeholder="SHORT DESCRIPTION (eg: JORDANS 1,...)"
           style={{
             borderColor: "red",
             borderBottomWidth: 5,
@@ -194,6 +197,7 @@ const Add = ({ navigation }, props) => {
           }}
         />
         <TextInput
+          keyboardType="number-pad"
           placeholder="PHONE NO"
           style={{
             borderColor: "red",
@@ -202,6 +206,26 @@ const Add = ({ navigation }, props) => {
             margin: 6,
           }}
         />
+        <View
+          style={{
+            borderColor: "red",
+            borderBottomWidth: 5,
+            padding: 6,
+            margin: 6,
+          }}
+        >
+          <Picker
+            selectedValue={selectedLanguage}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedLanguage(itemValue)
+            }
+            mode="dropdown"
+          >
+            <Picker.Item label="Shop" value="shops" />
+            <Picker.Item label="meetup" value="meetups" />
+            <Picker.Item label="worker" value="worker" />
+          </Picker>
+        </View>
       </View>
       <View style={{ justifyContent: "center", display: "flex" }}>
         <Pressable

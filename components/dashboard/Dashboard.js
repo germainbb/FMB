@@ -1,4 +1,5 @@
 import {
+  ScrollView,
   View,
   Text,
   TouchableOpacity,
@@ -6,12 +7,14 @@ import {
   StyleSheet,
   Image,
   Dimensions,
+  Modal,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -68,6 +71,12 @@ const myposts = [
 ];
 
 export default function Dashboard() {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const onSubmit = () => {
+    setModalVisible(!modalVisible);
+  };
+
   const navigation = useNavigation();
   const addScreen = () => {
     navigation.navigate("add");
@@ -79,14 +88,17 @@ export default function Dashboard() {
   const RenderItem = ({ item, index }) => {
     return (
       <View style={styles.itemContainer}>
-        <View style={styles.itemLogo}>
-          <Image
-            style={styles.itemImage}
-            source={{
-              uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-            }}
-          />
-        </View>
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <View style={styles.itemLogo}>
+            <Image
+              resizeMode="contain"
+              style={styles.itemImage}
+              source={{
+                uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+              }}
+            />
+          </View>
+        </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
           <TouchableOpacity>
@@ -135,6 +147,56 @@ export default function Dashboard() {
           <Ionicons name="add-sharp" size={30} color="black" />
         </TouchableOpacity>
       </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ScrollView>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                style={{ marginLeft: width * 0.5, bottom: 10 }}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <FontAwesome name="times" size={30} color="black" />
+              </TouchableOpacity>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={{
+                  uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+                }}
+              />
+              <View style={styles.itembody}>
+                <Text style={styles.itemPrice}>K30,00</Text>
+                <TouchableOpacity style={{ left: width * 0.19 }}>
+                  <Feather name="heart" size={24} color="skyblue" />
+                  <Text>10m</Text>
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.modalText}>name of object </Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                description frtew hhhfhhfd uhudhfisbs ucduhussigdhhfyrjuu
+                fgrhyhsgd tuqwerty qwerty lorem ipsum hejddjfsj hejddjfsjfgda
+                fnc ddhdhsj hfhh righth germainge germain germain germain
+              </Text>
+              <View style={styles.contact}>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={onSubmit}
+                >
+                  <Text style={styles.textStyle}>Delete this post</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </Modal>
       {/* //INDIVIDUAL POSTS */}
       <View>
         <FlatList
@@ -143,7 +205,7 @@ export default function Dashboard() {
           keyExtractor={(item, index) => index.toString()}
           renderItem={RenderItem}
           // itemSeparatorComponent={separator}
-          style={{ marginBottom: 110 }}
+          style={{ marginBottom: 190 }}
         />
       </View>
     </View>
@@ -188,5 +250,65 @@ const styles = StyleSheet.create({
     backgroundColor: "green",
     justifyContent: "center",
     padding: 3,
+  },
+  image: {
+    width: width * 0.6,
+    height: height * 0.45,
+  },
+  itembody: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  itemPrice: {
+    fontWeight: "bold",
+    right: width * 0.19,
+  },
+  contact: {
+    flexDirection: "row",
+    display: "flex",
+    top: 6,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    flex: 1,
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  centeredView: {
+    flex: 1,
+    //backgroundColor: "black",
+    alignItems: "center",
+    marginTop: "70%",
+    width: "80%",
+    left: "10%",
+    bottom: "15%",
+  },
+  modalView: {
+    display: "flex",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "darkorange",
+    shadowOffset: {
+      width: 0,
+      height: 50,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

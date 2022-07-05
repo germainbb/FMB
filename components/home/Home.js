@@ -25,6 +25,7 @@ import Edit from "../dashboard/Edit";
 import Contact from "../dashboard/Contact";
 import Workers from "../Workers/Workers";
 import { createStackNavigator } from "@react-navigation/stack";
+import MyPager from "../dashboard/MyPager";
 
 const { width, height } = Dimensions.get("window");
 const Tab = createBottomTabNavigator();
@@ -78,6 +79,14 @@ const Homer = () => {
           headerShown: false,
         }}
       />
+      {/* <Stack.Screen
+        name="promotions"
+        component={MyPager}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      /> */}
       <Stack.Screen
         name="myposts1"
         component={myPosts}
@@ -172,7 +181,7 @@ const Worker = () => {
     >
       <Stack.Screen
         name="Workers"
-        component={Workers}
+        component={MyPager}
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
