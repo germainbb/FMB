@@ -16,11 +16,20 @@ import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../firebase";
+import { db, storage } from "../../components/dashboard/firebase";
 import { updateCurrentUser } from "firebase/auth";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
+import { useNavigation } from "@react-navigation/native";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { useForm, Controller } from "react-hook-form";
 
 const { width, height } = Dimensions.get("window");
 
@@ -32,7 +41,29 @@ const Add = ({ navigation }, props) => {
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [category, setcategory] = useState("");
+  const [name, setname] = useState("");
+  const [description, setdescription] = useState("");
+  const [price, setprice] = useState(0);
+  const [phone, setphone] = useState("");
+  const [profilepic, setprofilepic] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  //const navigationo = useNavigation();
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      description: "",
+      price: "",
+      phone: "",
+      category: "",
+    },
+  });
 
   const cam = useRef().current;
 
@@ -80,15 +111,89 @@ const Add = ({ navigation }, props) => {
     return <Text>No access to camera</Text>;
   }
 
-  const uploadImg = async (image) => {
-    const img = image;
-    console.log("image:" + img);
-    const metadata = {
-      contentType: image.type,
-    };
-    const storageRef = ref(storage, "rav4");
-    const UploadTask = await uploadBytesResumable(storageRef, img, metadata);
+  // const uploadImg = async (image) => {
+  //   const img = image;
+  //   console.log("image:" + img);
+  //   const metadata = {
+  //     contentType: image.type,
+  //   };
+  //   const storageRef = ref(storage, "rav4");
+  //   const UploadTask = await uploadBytesResumable(storageRef, img, metadata);
 
+  //   UploadTask.on(
+  //     "state_changed",
+  //     (snapshot) => {
+  //       const prog = Math.round(
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+  //       );
+  //       setProgress(prog);
+  //       Alert.alert("Oops", "try again germain");
+  //     },
+  //     (err) => {
+  //       Alert.alert(err + "not working");
+  //     },
+  //     () => {
+  //       getDownloadURL(UploadTask.snapshot.ref)
+  //         .then((url) => console.log(`url: ${url}`))
+  //         .catch(() => {
+  //           Alert.alert("Oops", "try again germain");
+  //         });
+  //     }
+  //   );
+  // };
+
+  // UPLOADING POST TO FIREBASE FIRESTORE
+  const uploadPost = async () => {
+    if (loading) return;
+
+    setLoading(true);
+
+    const uri = image;
+
+    const blob = await new Promise((resolve, reject) => {
+      const uri = image;
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
+      xhr.send(null);
+    });
+
+    const docRef = await addDoc(collection(db, "posts"), {
+      profileImage: image,
+      description: description,
+      timestamp: serverTimestamp(),
+      price: price,
+      name: name,
+      phone: phone,
+      category: category,
+      // profilepic: profilepic,
+      // likes: likes,
+      // likesByUsers: likesByUsers
+    })
+      .then(() => console.log("this is the docRef"))
+      .catch(() => {
+        console.log("rejected");
+      });
+    const imageRef = ref(storage, `images/${description}`);
+    const metadata = {
+      contentType: "image/jpg",
+    };
+
+    const UploadTask = await uploadBytesResumable(
+      imageRef,
+      blob,
+      metadata
+    ).then(
+      () => Alert.alert(" image uploaded successfully!!"),
+      () => Alert.alert("Oops", "try again germain")
+    );
     UploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -96,19 +201,22 @@ const Add = ({ navigation }, props) => {
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100
         );
         setProgress(prog);
-        Alert.alert("Oops", "try again germain");
       },
       (err) => {
         Alert.alert(err + "not working");
       },
-      () => {
-        getDownloadURL(UploadTask.snapshot.ref)
-          .then((url) => console.log(`url: ${url}`))
-          .catch(() => {
-            Alert.alert("Oops", "try again germain");
-          });
+      async () => {
+        Alert.alert("Oops", "try again germain");
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(doc(db, "posts", docRef.id), {
+          imageUrl: downloadURL,
+        });
+        blob.close();
+        navigation.goBack();
       }
     );
+
+    navigation.goBack();
   };
 
   return (
@@ -168,44 +276,88 @@ const Add = ({ navigation }, props) => {
       )}
       {/*POST DETAILS*/}
       <View>
-        <TextInput
-          placeholder="example(SHOES or DRESS)"
-          style={{
-            borderColor: "red",
-            borderBottomWidth: 5,
-            padding: 6,
-            margin: 6,
-          }}
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="example(SHOES or DRESS)"
+              onChangeText={(name) => setname(name)}
+              style={{
+                borderColor: "red",
+                borderBottomWidth: 5,
+                padding: 6,
+                margin: 6,
+              }}
+            />
+          )}
+          name="name"
+          rules={{ required: true }}
         />
-        <TextInput
-          keyboardType="number-pad"
-          placeholder="PRICE IN KWACHA"
-          style={{
-            borderColor: "red",
-            borderBottomWidth: 5,
-            padding: 6,
-            margin: 6,
-          }}
+        {errors.name && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              keyboardType="number-pad"
+              placeholder="PRICE IN KWACHA"
+              onChangeText={(price) => setprice(price)}
+              style={{
+                borderColor: "red",
+                borderBottomWidth: 5,
+                padding: 6,
+                margin: 6,
+              }}
+            />
+          )}
+          name="price"
+          rules={{ required: true }}
         />
-        <TextInput
-          placeholder="SHORT DESCRIPTION (eg: JORDANS 1,...)"
-          style={{
-            borderColor: "red",
-            borderBottomWidth: 5,
-            padding: 6,
-            margin: 6,
-          }}
+        {errors.price && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="SHORT DESCRIPTION (eg: JORDANS 1,...)"
+              onChangeText={(description) => setdescription(description)}
+              style={{
+                borderColor: "red",
+                borderBottomWidth: 5,
+                padding: 6,
+                margin: 6,
+              }}
+            />
+          )}
+          name="description"
+          rules={{ required: true }}
         />
-        <TextInput
-          keyboardType="number-pad"
-          placeholder="PHONE NO"
-          style={{
-            borderColor: "red",
-            borderBottomWidth: 5,
-            padding: 6,
-            margin: 6,
-          }}
+        {errors.description && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={(phone) => setphone(phone)}
+              placeholder="PHONE NO"
+              style={{
+                borderColor: "red",
+                borderBottomWidth: 5,
+                padding: 6,
+                margin: 6,
+              }}
+            />
+          )}
+          name="phone"
+          rules={{ required: true }}
         />
+        {errors.phone && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
         <View
           style={{
             borderColor: "red",
@@ -215,11 +367,10 @@ const Add = ({ navigation }, props) => {
           }}
         >
           <Picker
-            selectedValue={selectedLanguage}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedLanguage(itemValue)
-            }
-            mode="dropdown"
+            selectedValue={category}
+            onValueChange={(itemValue, itemIndex) => setcategory(itemValue)}
+            mode="dialog"
+            prompt="select category"
           >
             <Picker.Item label="Shop" value="shops" />
             <Picker.Item label="meetup" value="meetups" />
@@ -228,32 +379,11 @@ const Add = ({ navigation }, props) => {
         </View>
       </View>
       <View style={{ justifyContent: "center", display: "flex" }}>
-        <Pressable
-          onPress={() => navigation.navigate("home", { image })}
-          style={{
-            display: "flex",
-            //width: 50,
-            justifyContent: "center",
-
-            borderRadius: 5,
-          }}
-        >
-          <Text
-            style={{
-              display: "flex",
-              height: height * 0.09,
-              width: width * 0.6,
-              backgroundColor: "skyblue",
-              borderRadius: 9,
-              alignSelf: "center",
-              padding: 9,
-              fontSize: 30,
-              paddingLeft: "20%",
-            }}
-          >
-            POST
-          </Text>
-        </Pressable>
+        <TouchableOpacity onPress={uploadPost} style={styles.postbutton}>
+        <Text style={{alignSelf: "center", marginTop: 6, fontSize: 25}}>
+          POST
+        </Text>
+        </TouchableOpacity>
       </View>
       <View style={{ marginBottom: 65 }}>
         <Text style={{ padding: 6 }}>
@@ -303,6 +433,15 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     color: "white",
+  },
+  postbutton: {
+    marginTop: 4,
+    color: "pink",
+    height: 40,
+    backgroundColor: "#ec5990",
+    borderRadius: 4,
+    marginBottom: 40,
+    
   },
 });
 

@@ -12,6 +12,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Carousel from "../dashboard/Carousel";
+import {fetchUser, fetchAllPosts,handleLikes, fetchUserData} from "../../reduxTK/functions/Index"
 
 const listTab = [
   { status: "all" },
@@ -89,7 +90,12 @@ const Filter = () => {
     }
     setstatus(status);
   };
-  const renderItem = ({ item, index }) => {
+  const renderItem = ({ item, index}) => {
+    const Likes = ({ mypost }) => (
+      <Text>hey</Text>
+      // {mypost.likesByUsers.length.toLocaleString("en")}
+    );
+
     return (
       <View key={`View_${index}`} style={styles.itemContainer}>
         <View style={styles.profile}>
@@ -103,7 +109,7 @@ const Filter = () => {
         </View>
         <TouchableOpacity onPress={personalScreen} style={styles.itemLogo}>
           <Image
-           resizeMode="contain"
+            resizeMode="contain"
             style={styles.itemImage}
             source={{
               uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
@@ -112,9 +118,9 @@ const Filter = () => {
         </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleLikes(mypost)}>
             <Feather name="heart" size={24} color="skyblue" />
-            <Text>10m</Text>
+            <Likes />
           </TouchableOpacity>
         </View>
         <View
@@ -159,9 +165,9 @@ const Filter = () => {
           ))}
         </View>
       </ScrollView>
-      
+
       <FlatList
-        ListHeaderComponent={<Carousel/>}
+        ListHeaderComponent={<Carousel />}
         numColumns={2}
         data={datalist}
         keyExtractor={(item, index) => index.toString()}

@@ -9,7 +9,7 @@ import {
   TouchableOpacity
 } from 'react-native'
 import React, { useState } from 'react'
-import { db, storage } from '../firebase'
+import { db, storage } from '../../components/dashboard/firebase'
 import {
   collection,
   addDoc,

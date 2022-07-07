@@ -246,7 +246,7 @@ const AfterLogin = () => {
               <Entypo
                 name="megaphone"
                 size={25}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru": "black"}
               />
             </View>
           ),
@@ -261,7 +261,7 @@ const AfterLogin = () => {
               <MaterialIcons
                 name="work"
                 size={25}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru" : "black"}
               />
             </View>
           ),
@@ -276,7 +276,7 @@ const AfterLogin = () => {
               <MaterialIcons
                 name="dashboard"
                 size={24}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru": "black"}
               />
             </View>
           ),
@@ -292,7 +292,7 @@ const AfterLogin = () => {
               <AntDesign
                 name="home"
                 size={35}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru" : "black"}
               />
             </View>
           ),
@@ -307,7 +307,7 @@ const AfterLogin = () => {
               <Fontisto
                 name="shopping-store"
                 size={24}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru" : "black"}
               />
             </View>
           ),
@@ -322,7 +322,7 @@ const AfterLogin = () => {
               <Ionicons
                 name="md-people-sharp"
                 size={25}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru" : "black"}
               />
             </View>
           ),
@@ -337,7 +337,7 @@ const AfterLogin = () => {
               <Ionicons
                 name="search"
                 size={25}
-                color={focused ? "orange" : "black"}
+                color={focused ? "peru" : "black"}
               />
             </View>
           ),

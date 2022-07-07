@@ -17,7 +17,7 @@ export default function Contact() {
   const navigation = useNavigation();
 
   const done = () => {
-    navigation.navigate("home");
+    navigation.goBack("home");
   };
   return (
     <ScrollView>
@@ -53,7 +53,7 @@ export default function Contact() {
           <Button
             style={styles.button}
             color="#ec5990"
-            title="Done"
+            title="Dne"
             onPress={done}
           />
         </TouchableOpacity>

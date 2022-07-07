@@ -12,6 +12,7 @@ import {
   TextInput,
   Pressable,
   Alert,
+  Linking,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -48,6 +49,7 @@ const Filter = () => {
   const [status, setstatus] = useState("all");
   const [datalist, setDatalist] = useState(data);
   const [modalVisible, setModalVisible] = useState(false);
+  const [mobile_no, setmobile_no] = useState("0776778798")
 
   const navigation = useNavigation();
 
@@ -192,7 +194,14 @@ const Filter = () => {
                 >
                   <Text style={styles.textStyle}>seller details</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ flex: 1, left: width * 0.18 }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    Linking.openURL(
+                      "http://api.whatsapp.com/send?phone=26" + mobile_no
+                    );
+                  }}
+                  style={{ flex: 1, left: width * 0.18 }}
+                >
                   <FontAwesome name="whatsapp" size={45} color="green" />
                 </TouchableOpacity>
               </View>
