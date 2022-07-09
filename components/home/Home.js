@@ -28,6 +28,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import MyPager from "../dashboard/MyPager";
 import Carousel from "../dashboard/Carousel";
 import { Entypo } from "@expo/vector-icons";
+import Save from "../dashboard/Save";
 
 const { width, height } = Dimensions.get("window");
 const Tab = createBottomTabNavigator();

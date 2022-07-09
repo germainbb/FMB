@@ -30,6 +30,10 @@ import {
   doc,
 } from "firebase/firestore";
 import { useForm, Controller } from "react-hook-form";
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Setting a timer']);
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,11 +45,11 @@ const Add = ({ navigation }, props) => {
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
-  const [category, setcategory] = useState("");
-  const [name, setname] = useState("");
-  const [description, setdescription] = useState("");
-  const [price, setprice] = useState(0);
-  const [phone, setphone] = useState("");
+   const [category, setcategory] = useState("");
+  // const [name, setname] = useState("");
+  // const [description, setdescription] = useState("");
+  // const [price, setprice] = useState(0);
+  // const [phone, setphone] = useState("");
   const [profilepic, setprofilepic] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -55,15 +59,22 @@ const Add = ({ navigation }, props) => {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
       name: "",
-      description: "",
       price: "",
+      description: "",
       phone: "",
       category: "",
     },
   });
+
+  const onChange = args => {
+    return {
+      value: args[0].nativeEvent.text,
+    };
+  };
 
   const cam = useRef().current;
 
@@ -143,7 +154,9 @@ const Add = ({ navigation }, props) => {
   // };
 
   // UPLOADING POST TO FIREBASE FIRESTORE
-  const uploadPost = async () => {
+  
+  const uploadPost = async (props) => {
+    console.log(props.name);
     if (loading) return;
 
     setLoading(true);
@@ -167,57 +180,59 @@ const Add = ({ navigation }, props) => {
 
     const docRef = await addDoc(collection(db, "posts"), {
       profileImage: image,
-      description: description,
+      description: props.description,
       timestamp: serverTimestamp(),
-      price: price,
-      name: name,
-      phone: phone,
-      category: category,
+      price: props.price,
+      name: props.name,
+      phone: props.phone,
+      category: props.category,
       // profilepic: profilepic,
       // likes: likes,
       // likesByUsers: likesByUsers
     })
-      .then(() => console.log("this is the docRef"))
+      .then(() => Alert.alert(" post uploaded successfully!!"))
       .catch(() => {
-        console.log("rejected");
+        () => Alert.alert("Oops", "try again buddy");
       });
-    const imageRef = ref(storage, `images/${description}`);
-    const metadata = {
-      contentType: "image/jpg",
-    };
 
-    const UploadTask = await uploadBytesResumable(
-      imageRef,
-      blob,
-      metadata
-    ).then(
-      () => Alert.alert(" image uploaded successfully!!"),
-      () => Alert.alert("Oops", "try again germain")
-    );
-    UploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const prog = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(prog);
-      },
-      (err) => {
-        Alert.alert(err + "not working");
-      },
-      async () => {
-        Alert.alert("Oops", "try again germain");
-        const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, "posts", docRef.id), {
-          imageUrl: downloadURL,
-        });
-        blob.close();
-        navigation.goBack();
-      }
-    );
+      navigation.goBack("dashboard")
+    // const imageRef = ref(storage, `images/${description}`);
+    // const metadata = {
+    //   contentType: "image/jpg",
+    // };
 
-    navigation.goBack();
+    // const UploadTask = await uploadBytesResumable(
+    //   imageRef,
+    //   blob,
+    //   metadata
+    // ).then(
+    //   () => Alert.alert(" image uploaded successfully!!"),
+    //   () => Alert.alert("Oops", "try again germain")
+    // )
+    // UploadTask.on(
+    //   "state_changed",
+    //   (snapshot) => {
+    //     const prog = Math.round(
+    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    //     );
+    //     setProgress(prog);
+    //   },
+    //   (err) => {
+    //     Alert.alert(err + "not working");
+    //   },
+    //   async () => {
+    //     Alert.alert("Oops", "try again germain");
+    //     const downloadURL = await getDownloadURL(imageRef);
+    //     await updateDoc(doc(db, "posts", docRef.id), {
+    //       imageUrl: downloadURL,
+    //     });
+    //     blob.close();
+    //     navigation.goBack("dashboard");
+    //   }
+    // );
   };
+
+  
 
   return (
     <ScrollView style={{ bottom: 1 }}>
@@ -274,6 +289,9 @@ const Add = ({ navigation }, props) => {
           }}
         />
       )}
+
+
+       
       {/*POST DETAILS*/}
       <View>
         <Controller
@@ -281,7 +299,9 @@ const Add = ({ navigation }, props) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="example(SHOES or DRESS)"
-              onChangeText={(name) => setname(name)}
+              value={value}            
+              onBlur={onBlur}            
+              onChangeText={value => onChange(value)}
               style={{
                 borderColor: "red",
                 borderBottomWidth: 5,
@@ -302,7 +322,9 @@ const Add = ({ navigation }, props) => {
             <TextInput
               keyboardType="number-pad"
               placeholder="PRICE IN KWACHA"
-              onChangeText={(price) => setprice(price)}
+              value={value}            
+              onBlur={onBlur}            
+              onChangeText={value => onChange(value)}
               style={{
                 borderColor: "red",
                 borderBottomWidth: 5,
@@ -322,7 +344,9 @@ const Add = ({ navigation }, props) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="SHORT DESCRIPTION (eg: JORDANS 1,...)"
-              onChangeText={(description) => setdescription(description)}
+              value={value}            
+              onBlur={onBlur}            
+              onChangeText={value => onChange(value)}
               style={{
                 borderColor: "red",
                 borderBottomWidth: 5,
@@ -342,7 +366,9 @@ const Add = ({ navigation }, props) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               keyboardType="number-pad"
-              onChangeText={(phone) => setphone(phone)}
+              value={value}            
+              onBlur={onBlur}            
+              onChangeText={value => onChange(value)}
               placeholder="PHONE NO"
               style={{
                 borderColor: "red",
@@ -358,6 +384,9 @@ const Add = ({ navigation }, props) => {
         {errors.phone && (
           <Text style={{ color: "red" }}>This is required.</Text>
         )}
+      <Controller
+        control={control}
+        render={({value})=> (
         <View
           style={{
             borderColor: "red",
@@ -366,20 +395,30 @@ const Add = ({ navigation }, props) => {
             margin: 6,
           }}
         >
+        
           <Picker
-            selectedValue={category}
-            onValueChange={(itemValue, itemIndex) => setcategory(itemValue)}
-            mode="dialog"
+            selectedValue={value}
+            onValueChange={(itemValue, itemIndex) => setValue("category",itemValue)}
+            mode="dropdown"
             prompt="select category"
           >
-            <Picker.Item label="Shop" value="shops" />
+            <Picker.Item label="select category" value="meetups" />
             <Picker.Item label="meetup" value="meetups" />
+            <Picker.Item label="Shop" value="shops" />
             <Picker.Item label="worker" value="worker" />
           </Picker>
         </View>
+        )}
+        name="category"
+        rules={{ required: true }}
+      />
+      {errors.phone && (
+          <Text style={{ color: "red" }}>This is required.</Text>
+        )}
+
       </View>
       <View style={{ justifyContent: "center", display: "flex" }}>
-        <TouchableOpacity onPress={uploadPost} style={styles.postbutton}>
+        <TouchableOpacity onPress={handleSubmit((data)=> uploadPost(data))} style={styles.postbutton}>
         <Text style={{alignSelf: "center", marginTop: 6, fontSize: 25}}>
           POST
         </Text>
