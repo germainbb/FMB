@@ -1,38 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   currentUser: null,
-  posts: [],
-}
+};
 
 export const counterSlice = createSlice({
-  name: 'user',
-  initialState: {
-    currentUser: null
-  },
+  name: "user",
+  initialState,
   reducers: {
-    fetchuser: (state, action) => {
-      
+    setuser: (state, action) => {
       state.currentUser = action.payload;
-    
     },
-    user: (state, action) => {
-      
-      state.posts.values = action.posts;
+    logout: (state) => {
+      state.currentUser = null;
     },
-    clearData: () => {
-      return initialState
-    },
-    // incrementByAmount: (state, action) => {
-    //   state.value += action.payload
-    // }
-  }
-})
-
+  },
+});
+// incrementByAmount: (state, action) => {
+//   state.value += action.payload
+// }
 // Action creators are generated for each case reducer function
-export const { user, fetchUser, incrementByAmount } = counterSlice.actions
+export const { setuser, logout } = counterSlice.actions;
 
-export default counterSlice.reducer
+export default counterSlice.reducer;
 
 // const initialState = {
 //     currentUser: null

@@ -11,7 +11,6 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { auth } from "../dashboard/firebase";
@@ -19,21 +18,54 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "../dashboard/firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector, useDispatch } from 'react-redux'
-import { setuser } from "../../reduxTK/reducers/User";
 
 const provider = new GoogleAuthProvider();
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [show, setshow] = useState(false)
-  
-  const dispatch = useDispatch()
   const navigation = useNavigation();
 
   useEffect(() => {
-    
+    const getData = async () => {
+      try {
+        const emaill = await AsyncStorage.getItem("Email");
+        const pass = await AsyncStorage.getItem("Password");
+        if (emaill !== null && pass !== null) {
+          // value previously stored
+          const handleSignIn = async () => {
+            signInWithEmailAndPassword(auth, emaill, pass)
+              .then(async (userCredential) => {
+                console.log("signed in");
+                const user = userCredential.user;
+                console.log(user);
+                await addDoc(collection(db, "users"), {
+                  email: email,
+                })
+                  .then(() => console.log("this is the email"))
+                  .catch(() => {
+                    console.log("rejected");
+                  });
+        
+                navigation.navigate("FMB");
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          };
+          handleSignIn()
+        }else{
+          console.log("no data")
+        }
+      } catch (e) {
+        // error reading value
+      }
+    };
+
+
+    return () => {
+      getData()
+    };
   }, []);
 
   const handleCreateAccount = () => {
@@ -41,9 +73,7 @@ const LoginScreen = () => {
       .then((userCredential) => {
         console.log("account created");
         const user = userCredential.user;
-        setshow(true)
-        dispatch(setuser(user.email))
-        console.log(user.email);
+        console.log(user);
         storeData(email, password);
         navigation.navigate("FMB");
       })
@@ -54,15 +84,11 @@ const LoginScreen = () => {
   };
 
   const handleSignIn = async () => {
-    const emaill = await AsyncStorage.getItem("Email");
-    const pass = await AsyncStorage.getItem("Password");
     signInWithEmailAndPassword(auth, emaill, pass)
       .then(async (userCredential) => {
-        setshow(true)
         console.log("signed in");
         const user = userCredential.user;
-        dispatch(setuser(user.email))
-        console.log(user.email);
+        console.log(user);
         await addDoc(collection(db, "users"), {
           email: email,
         })
@@ -74,7 +100,6 @@ const LoginScreen = () => {
         navigation.navigate("FMB");
       })
       .catch((error) => {
-        Alert.alert("register please");
         console.log(error);
       });
   };
@@ -92,10 +117,11 @@ const LoginScreen = () => {
     }
   };
 
+  
+
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.inputContainer}>
-        <Text>Tap login if you've registered before{"\n"}Tap register to register for the first time</Text>
         <TextInput
           placeholder="Email"
           value={email}
@@ -121,7 +147,6 @@ const LoginScreen = () => {
         <TouchableOpacity onPress={handleSignIn} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        {<ActivityIndicator size="large" color="#0000ff" animating={show}/>}
       </View>
     </KeyboardAvoidingView>
   );

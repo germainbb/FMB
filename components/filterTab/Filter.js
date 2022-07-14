@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -8,11 +8,25 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  Modal,
+  Alert,
+  Linking,
+  BackHandler,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Carousel from "../dashboard/Carousel";
-import {fetchUser, fetchAllPosts,handleLikes, fetchUserData} from "../../reduxTK/functions/Index"
+import {
+  fetchUser,
+  fetchAllPosts,
+  handleLikes,
+  fetchUserData,
+} from "../../reduxTK/functions/Index";
+//import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+
+const { width, height } = Dimensions.get("window");
 
 const listTab = [
   { status: "all" },
@@ -75,8 +89,15 @@ const data = [
 const Filter = () => {
   const [status, setstatus] = useState("all");
   const [datalist, setDatalist] = useState(data);
+  const [modalvisible, setModalvisible] = useState(false);
+  const [mobile_no, setmobile_no] = useState("0776778798");
 
   const navigation = useNavigation();
+  const onSubmit = () => {
+    navigation.navigate("contact1");
+    setModalvisible(!modalvisible);
+  };
+
   const personalScreen = () => {
     navigation.navigate("myposts1");
   };
@@ -90,11 +111,20 @@ const Filter = () => {
     }
     setstatus(status);
   };
-  const renderItem = ({ item, index}) => {
-    const Likes = ({ mypost }) => (
-      <Text>hey</Text>
-      // {mypost.likesByUsers.length.toLocaleString("en")}
-    );
+  const renderItem = ({ item, index }) => {
+    const fetchAllPosts = () => {
+      const posts = query(
+        collectionGroup(db, "myposts"),
+        orderBy("timeStamp", "desc")
+      );
+      const querySnapshot = getDocs(posts);
+      const allPosts = querySnapshot.map((doc) => {
+        const data = doc.data();
+        const id = doc.id;
+        return { id, ...data };
+      });
+      dispatch(fetchAllPosts(allPosts));
+    };
 
     return (
       <View key={`View_${index}`} style={styles.itemContainer}>
@@ -105,9 +135,13 @@ const Filter = () => {
               uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
             }}
           />
-          <Text>shoprite</Text>
+          <Text numberOfLines={2} style={{marginHorizontal:3, display:"flex", flex:1}}>shoprite fhfhfh hfjfjfjj</Text>
+          <Text numberOfLines={2} style={{marginHorizontal:3, display:"flex", flex:1}}>date of upload</Text>
         </View>
-        <TouchableOpacity onPress={personalScreen} style={styles.itemLogo}>
+        <TouchableOpacity
+          onPress={() => setModalvisible(true)}
+          style={styles.itemLogo}
+        >
           <Image
             resizeMode="contain"
             style={styles.itemImage}
@@ -118,9 +152,10 @@ const Filter = () => {
         </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <TouchableOpacity onPress={() => handleLikes(mypost)}>
-            <Feather name="heart" size={24} color="skyblue" />
-            <Likes />
+          <TouchableOpacity onPress={personalScreen}>
+            <MaterialIcons name="store" size={24} color="green" />
+
+            <Text>stock</Text>
           </TouchableOpacity>
         </View>
         <View
@@ -139,6 +174,27 @@ const Filter = () => {
   const separator = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Hold on!", "Are you sure you want to EXIT?", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        { text: "YES", onPress: () => BackHandler.exitApp() },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <View style={{ margin: 5 }}>
@@ -176,6 +232,75 @@ const Filter = () => {
         style={{ marginBottom: 110 }}
         refreshing={true}
       />
+      {/* MODAL START */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalvisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalvisible(!modalvisible);
+        }}
+      >
+        <ScrollView>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                style={{ display: "flex",bottom: 10,flexDirection:"row", justifyContent: "space-between" }}
+                onPress={() => setModalvisible(!modalvisible)}
+              >
+                <Text style={{display:"flex", flex:1}}>date posted</Text>
+                <FontAwesome name="times" size={30} color="black" />
+              </TouchableOpacity>
+              <View style={styles.profilepic}>
+                <Image
+                  style={styles.profileimage}
+                  source={{
+                    uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+                  }}
+                />
+                <Text style={{alignSelf: "center"}}>shoprite (Business or username username username username)</Text>
+                
+              </View>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={{
+                  uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+                }}
+              />
+              <View style={styles.itembody}>
+                <Text style={styles.itemPrice}>K30,000,000,000</Text>
+              </View>
+              <Text style={styles.modalText}>name of object </Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                description frtew hhhfhhfd uhudhfisbs ucduhussigdhhfyrjuu
+                fgrhyhsgd tuqwerty qwerty lorem ipsum hejddjfsj hejddjfsjfgda
+                fnc ddhdhsj hfhh righth germainge germain germain germain
+              </Text>
+              <View style={styles.contact}>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={onSubmit}
+                >
+                  <Text style={styles.textStyle}>seller details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Linking.openURL(
+                      "http://api.whatsapp.com/send?phone=26" + mobile_no
+                    );
+                  }}
+                  style={{ flex: 1, left: width * 0.18 }}
+                >
+                  <FontAwesome name="whatsapp" size={45} color="green" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </Modal>
+      {/* MODAL END */}
     </View>
   );
 };
@@ -244,7 +369,82 @@ const styles = StyleSheet.create({
     height: 20,
     margin: 3,
   },
+  profileimage: {
+    
+    borderRadius: 9,
+    width: 60,
+    height: 60,
+    margin: 3,
+  },
   profile: {
+    display: "flex",
+    
     flexDirection: "row",
+  },
+  profilepic: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  centeredView: {
+    flex: 1,
+    //backgroundColor: "black",
+    alignItems: "center",
+    marginTop: "70%",
+    width: "80%",
+    left: "10%",
+    bottom: "15%",
+  },
+  modalView: {
+    display: "flex",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "darkorange",
+    shadowOffset: {
+      width: 0,
+      height: 50,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  image: {
+    width: width * 0.6,
+    height: height * 0.45,
+  },
+  itembody: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  itemPrice: {
+    fontWeight: "bold",
+    right: width * 0.19,
+  },
+  contact: {
+    flexDirection: "row",
+    display: "flex",
+    top: 6,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    flex: 1,
   },
 });

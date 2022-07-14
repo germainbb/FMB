@@ -178,7 +178,7 @@ const Add = ({ navigation }, props) => {
       xhr.send(null);
     });
 
-    const docRef = await addDoc(collection(db, "posts"), {
+    const docRef = await addDoc(collection(db, "users"), {
       profileImage: image,
       description: props.description,
       timestamp: serverTimestamp(),
