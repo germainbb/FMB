@@ -4,7 +4,7 @@ import {
   Text,
   View,
   Button,
-  ActivityIndicator,
+  ActivityIndicator,ImageBackground
 } from "react-native";
 import React, { useState, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { setuser } from "../../reduxTK/reducers/User";
+import tanaka from "../../assets/tanaka.jpg"
 
 const Signin = () => {
   const navigation = useNavigation();
@@ -23,7 +24,9 @@ const Signin = () => {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    setTimeout(() => {navigation.navigate("FMB sign up")}, 6000)
+    // setTimeout(() => {
+    //   navigation.navigate("FMB sign up");
+    // }, 9000);
     const handleSignIn = async () => {
       const emaill = await AsyncStorage.getItem("Email");
       const pass = await AsyncStorage.getItem("Password");
@@ -55,10 +58,12 @@ const Signin = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="green" animating={true} />
-      <Text style={{ alignSelf: "center" }}>Please wait</Text>
-    </View>
+    <ImageBackground source={tanaka} resizeMode="cover" style={styles.image}>
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="green" animating={true} />
+        <Text style={{ alignSelf: "center", fontSize: 20, color: "orange" }}>Please wait</Text>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -68,5 +73,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
+  },
+  image: {
+    flex: 1,
+    justifyContent: "center"
   },
 });

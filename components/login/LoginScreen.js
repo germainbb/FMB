@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { auth } from "../dashboard/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { db } from "../dashboard/firebase";
 import { GoogleAuthProvider } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -36,14 +36,21 @@ const LoginScreen = () => {
     
   }, []);
 
-  const handleCreateAccount = () => {
+  const handleCreateAccount =() => {
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async(userCredential) => {
         console.log("account created");
         const user = userCredential.user;
         setshow(true)
         dispatch(setuser(user.email))
         console.log(user.email);
+        await setDoc(doc(db, "users",user.email), {
+          email: email,
+        })
+          .then(() => console.log("this is the email"))
+          .catch(() => {
+            console.log("rejected");
+          });
         storeData(email, password);
         navigation.navigate("FMB");
       })
@@ -85,7 +92,7 @@ const LoginScreen = () => {
     try {
       await AsyncStorage.setItem("Email", email);
       await AsyncStorage.setItem("Password", password);
-      console.log(email + password);
+      //console.log(email + password);
     } catch (e) {
       // saving error
       console.log(e);

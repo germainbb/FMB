@@ -15,11 +15,17 @@ import * as ImagePicker from "expo-image-picker";
 // import { Text, View, TextInput, Button, Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
+import { updateDoc, doc, serverTimestamp, setDoc } from "firebase/firestore";
+import {useSelector, useDispatch} from "react-redux";
+import { db } from "./firebase";
 
 const { width, height } = Dimensions.get("window");
 
-export default function Edit() {
+export default function Edit(props) {
   const [image, setImage] = useState(null);
+
+  //const count = useSelector((state) => state.counter.value)
+  const userid = useSelector((state) => state.user.currentUser)
 
   const navigation = useNavigation();
 
@@ -54,6 +60,7 @@ export default function Edit() {
     handleSubmit,
     control,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
       businessName: "",
@@ -62,9 +69,26 @@ export default function Edit() {
       phoneNumber: "",
     },
   });
-  const onSubmit = (data) => {
-    console.log(data);
-    navigation.navigate("contact");
+  const onSubmit = async(props) => {
+    console.log(userid);
+    console.log( props);
+    await updateDoc(doc(db, "users",userid), {
+      profileImage: image,
+      description: props.businessDescription,
+      timestamp: serverTimestamp(),
+      name: props.businessName,
+      phone: props.phoneNumber,
+      location: props.shopLocation,
+    })
+      .then(() => {
+        navigation.navigate("contact"); 
+        Alert.alert(" details updated successfully!!");
+      })
+      .catch(() => {
+        () => Alert.alert("Oops", "try again buddy");
+      });
+    
+    
   };
 
   // console.log("errors", errors);
@@ -79,7 +103,7 @@ export default function Edit() {
             <TextInput
               style={styles.input}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChangeText={value => onChange(value)}
               value={value}
             />
           )}
@@ -96,7 +120,7 @@ export default function Edit() {
             <TextInput
               style={styles.input}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChangeText={value => onChange(value)}
               value={value}
             />
           )}
@@ -111,9 +135,10 @@ export default function Edit() {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              placeholder="Libala,Lusaka, or google maps location code"
               style={styles.input}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChangeText={value => onChange(value)}
               value={value}
             />
           )}
@@ -131,7 +156,7 @@ export default function Edit() {
               placeholder="0989898989 (whatsApp)"
               style={styles.input}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChangeText={value => onChange(value)}
               value={value}
               keyboardType={"numeric"}
             />
@@ -154,6 +179,7 @@ export default function Edit() {
           <Button title="Pick an image of your shop" onPress={pickImage} />
           {image && (
             <Image
+              resizeMode="contain"
               source={{ uri: image }}
               style={{ width: 350, height: 300 }}
             />
@@ -164,7 +190,7 @@ export default function Edit() {
             style={styles.buttonInner}
             color="#ec5990"
             title="Submit"
-            onPress={handleSubmit(onSubmit)}
+            onPress={handleSubmit((data)=>onSubmit(data))}
           />
         </View>
       </View>

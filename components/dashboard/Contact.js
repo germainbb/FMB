@@ -5,13 +5,15 @@ import {
   Text,
   Image,
   StyleSheet,
-  TouchableOpacity,
+  TouchableOpacity, Dimensions
 } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import rav from "../../assets/rav4prime.jpg";
+import { Feather } from "@expo/vector-icons";
 
-// const { width, height } = Dimensions.get("window");
+
+const { width, height } = Dimensions.get("window");
 
 export default function Contact() {
   const navigation = useNavigation();
@@ -27,6 +29,10 @@ export default function Contact() {
         >
           contact details
         </Text>
+        <TouchableOpacity style={{ left: 20, flexDirection:"row", display: "flex"}}>
+          <Feather name="heart" size={30} color="skyblue" style={{flex: 1, display: "flex"}}/>
+          <Text style={styles.likes}>10       people like your business </Text>
+        </TouchableOpacity>
         <Text style={styles.input}>business name</Text>
         <Text selectable style={styles.text}>
           bhkjhnkdskjndjskhckjdsbhcjdscbhjdcbjbcjdbcjdbcjxbcjsdgbcjdshcfjdsgjsdjdcjzzjcjdchdj
@@ -67,6 +73,12 @@ const styles = StyleSheet.create({
     margin: 6,
     padding: 10,
     //fontFamily: "Nunito",
+  },
+  likes: {
+    display: "flex",
+    //margin: 1,
+    padding: 3,
+   flex: 2
   },
   button: {
     marginTop: 4,

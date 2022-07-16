@@ -31,6 +31,7 @@ import {
 } from "firebase/firestore";
 import { useForm, Controller } from "react-hook-form";
 import { LogBox } from 'react-native';
+import {useSelector, useDispatch} from "react-redux";
 
 LogBox.ignoreLogs(['Setting a timer']);
 
@@ -52,6 +53,9 @@ const Add = ({ navigation }, props) => {
   // const [phone, setphone] = useState("");
   const [profilepic, setprofilepic] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const userid = useSelector((state) => state.user.currentUser)
+
 
   //const navigationo = useNavigation();
 
@@ -178,7 +182,7 @@ const Add = ({ navigation }, props) => {
       xhr.send(null);
     });
 
-    const docRef = await addDoc(collection(db, "users"), {
+    const docRef = await addDoc(collection(db, "users", userid, "posts"), {
       profileImage: image,
       description: props.description,
       timestamp: serverTimestamp(),
@@ -426,11 +430,9 @@ const Add = ({ navigation }, props) => {
       </View>
       <View style={{ marginBottom: 65 }}>
         <Text style={{ padding: 6 }}>
-          .YOU CAN WRITE IN ENGLISH OR NYANJA, BUT WE RECOMMEND ENGLISH.{"\n "}
-          .POST CLEAR PICTURES TO ATTRACT MORE CUSTOMERS.{"\n "}.NO IMMORAL
-          PICTURES PLEASE.
-          {"\n "}
-          .EXPAND YOUR BUSINESS!!
+         
+          .POST CLEAR PICTURES TO ATTRACT MORE CUSTOMERS.{"\n "}
+          .EXPAND YOUR BUSINESS 😊❤🚀🌎!!
         </Text>
       </View>
     </ScrollView>

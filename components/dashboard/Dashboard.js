@@ -84,6 +84,9 @@ export default function Dashboard() {
   const editScreen = () => {
     navigation.navigate("edit");
   };
+  const details = ()=>{
+    navigation.navigate("contact")
+  }
 
   const RenderItem = ({ item, index }) => {
     return (
@@ -101,10 +104,7 @@ export default function Dashboard() {
         </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <TouchableOpacity>
-            <Feather name="heart" size={24} color="skyblue" />
-            <Text>10m</Text>
-          </TouchableOpacity>
+          
         </View>
         <View
           style={[
@@ -124,16 +124,27 @@ export default function Dashboard() {
     <View>
       {/* //NAME AND TWO ICONS */}
       <View style={styles.header}>
-        <Text
+      <TouchableOpacity 
+          onPress={details} 
           style={{
-            flex: 4,
+            flexDirection: "row",
+            flex: 6,
             display: "flex",
             justifyContent: "flex-start",
-            alignItems: "center",
+            alignSelf: "center",
+          }}>
+        <Text
+          style={{
+            left: 3,
+            flex: 2,
+            display: "flex",
+            justifyContent: "flex-start",
+            alignSelf: "center",
           }}
         >
           NAME OF BUSINESS
         </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={editScreen}
           style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
@@ -174,10 +185,7 @@ export default function Dashboard() {
               />
               <View style={styles.itembody}>
                 <Text style={styles.itemPrice}>K30,00</Text>
-                <TouchableOpacity style={{ left: width * 0.19 }}>
-                  <Feather name="heart" size={24} color="skyblue" />
-                  <Text>10m</Text>
-                </TouchableOpacity>
+                
               </View>
               <Text style={styles.modalText}>name of object </Text>
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
