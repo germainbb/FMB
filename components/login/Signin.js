@@ -61,7 +61,7 @@ const Signin = () => {
     <ImageBackground source={tanaka} resizeMode="cover" style={styles.image}>
       <View style={styles.container}>
         <ActivityIndicator size="large" color="green" animating={true} />
-        <Text style={{ alignSelf: "center", fontSize: 20, color: "orange" }}>Please wait</Text>
+        <Text style={{ alignSelf: "center", fontSize: 20, color: "black" }}>Please wait</Text>
       </View>
     </ImageBackground>
   );

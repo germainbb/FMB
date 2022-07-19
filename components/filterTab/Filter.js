@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -16,15 +16,26 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Carousel from "../dashboard/Carousel";
-import {
-  fetchUser,
-  fetchAllPosts,
-  handleLikes,
-  fetchUserData,
-} from "../../reduxTK/functions/Index";
 //import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchAllPosts } from "../../reduxTK/reducers/PostsSlice";
+import { auth, db } from "../../components/dashboard/firebase";
+import { onSnapshot } from "firebase/firestore";
+import {
+  orderBy,
+  collection,
+  doc,
+  getDoc,
+  collectionGroup,
+  query,
+  where,
+  getDocs,
+  arrayRemove,
+  arrayUnion,
+  deleteDoc,
+} from "firebase/firestore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -91,7 +102,34 @@ const Filter = () => {
   const [datalist, setDatalist] = useState(data);
   const [modalvisible, setModalvisible] = useState(false);
   const [mobile_no, setmobile_no] = useState("0776778798");
+  const [Posts, setPosts] = useState([]);
 
+  const userid = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
+  //const Posts = useSelector((state) => state.posts.post)
+  //console.log("this is the state" + Posts)
+
+  useEffect(() => {
+    const fetchposts = async () => {
+      const posts = query(
+        collection(db, "users", userid, "posts")
+        // orderBy("timeStamp", "desc")
+      );
+      const querySnapshot = await getDocs(posts);
+
+      querySnapshot.docs.forEach((doc) => {
+        console.log(doc.id, " => ", doc.data());
+        const info = []
+        info.push({key:doc.id,...doc.data()})
+        setPosts(info);
+        console.log(Posts)
+      });
+      
+    };
+    fetchposts();
+  }, []);
+
+  //console.log("post", Posts)
   const navigation = useNavigation();
   const onSubmit = () => {
     navigation.navigate("contact1");
@@ -111,32 +149,29 @@ const Filter = () => {
     }
     setstatus(status);
   };
-  const renderItem = ({ item, index }) => {
-    const fetchAllPosts = () => {
-      const posts = query(
-        collectionGroup(db, "myposts"),
-        orderBy("timeStamp", "desc")
-      );
-      const querySnapshot = getDocs(posts);
-      const allPosts = querySnapshot.map((doc) => {
-        const data = doc.data();
-        const id = doc.id;
-        return { id, ...data };
-      });
-      dispatch(fetchAllPosts(allPosts));
-    };
+  const renderItem = ({ item, key }) => {
 
     return (
-      <View key={`View_${index}`} style={styles.itemContainer}>
+      <View key={key} style={styles.itemContainer}>
         <View style={styles.profile}>
           <Image
             style={styles.profileImage}
             source={{
-              uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+              uri: item.profileImage
             }}
           />
-          <Text numberOfLines={2} style={{marginHorizontal:3, display:"flex", flex:1}}>shoprite fhfhfh hfjfjfjj</Text>
-          <Text numberOfLines={2} style={{marginHorizontal:3, display:"flex", flex:1}}>date of upload</Text>
+          <Text
+            numberOfLines={2}
+            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+          >
+            {item.category}
+          </Text>
+          <Text
+            numberOfLines={2}
+            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+          >
+            {item.timestamp.toDate().toLocaleString('en')}
+          </Text>
         </View>
         <TouchableOpacity
           onPress={() => setModalvisible(true)}
@@ -146,12 +181,12 @@ const Filter = () => {
             resizeMode="contain"
             style={styles.itemImage}
             source={{
-              uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+              uri: item.profileImage,
             }}
           />
         </TouchableOpacity>
         <View style={styles.itemBody}>
-          <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={styles.itemName}>{item.description}</Text>
           <TouchableOpacity onPress={personalScreen}>
             <MaterialIcons name="store" size={24} color="green" />
 
@@ -166,7 +201,7 @@ const Filter = () => {
             },
           ]}
         >
-          <Text>{item.status}</Text>
+          <Text>{item.price}</Text>
         </View>
       </View>
     );
@@ -223,10 +258,10 @@ const Filter = () => {
       </ScrollView>
 
       <FlatList
-        ListHeaderComponent={<Carousel />}
+        ListHeaderComponent={<Carousel />}s
         numColumns={2}
-        data={datalist}
-        keyExtractor={(item, index) => index.toString()}
+        data={Posts}
+        keyExtractor={(item)=> item.key.toString}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
         style={{ marginBottom: 110 }}
@@ -246,10 +281,15 @@ const Filter = () => {
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <TouchableOpacity
-                style={{ display: "flex",bottom: 10,flexDirection:"row", justifyContent: "space-between" }}
+                style={{
+                  display: "flex",
+                  bottom: 10,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
                 onPress={() => setModalvisible(!modalvisible)}
               >
-                <Text style={{display:"flex", flex:1}}>date posted</Text>
+                <Text style={{ display: "flex", flex: 1 }}>date posted</Text>
                 <FontAwesome name="times" size={30} color="black" />
               </TouchableOpacity>
               <View style={styles.profilepic}>
@@ -259,8 +299,9 @@ const Filter = () => {
                     uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
                   }}
                 />
-                <Text style={{alignSelf: "center"}}>shoprite (Business or username username username username)</Text>
-                
+                <Text style={{ alignSelf: "center" }}>
+                  shoprite (Business or username username username username)
+                </Text>
               </View>
               <Image
                 resizeMode="contain"
@@ -333,6 +374,8 @@ const styles = StyleSheet.create({
     color: "#ff8c00",
   },
   itemContainer: {
+    display:"flex",
+    flex: 0.5,
     //padding: 2,
     width: "50%",
     marginHorizontal: 3,
@@ -340,11 +383,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   itemLogo: {
-    padding: 10,
+    padding: 5,
+    display: "flex",
   },
   itemImage: {
-    width: 120,
-    height: 150,
+    position: "relative",
+    flex: 1,
+    display: "flex",
+    //width: width,
+    height: height*0.25,
   },
   itemBody: {
     justifyContent: "space-between",
@@ -370,7 +417,6 @@ const styles = StyleSheet.create({
     margin: 3,
   },
   profileimage: {
-    
     borderRadius: 9,
     width: 60,
     height: 60,
@@ -378,7 +424,7 @@ const styles = StyleSheet.create({
   },
   profile: {
     display: "flex",
-    
+
     flexDirection: "row",
   },
   profilepic: {

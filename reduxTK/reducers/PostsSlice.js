@@ -1,24 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  posts: [],
+  post: [],
 }
 
-export const counterSlice = createSlice({
+export const PostsSlice = createSlice({
   name: 'posts',
   initialState,
   reducers: {
-    fetchPosts: (state, action) => {
-      state.posts = action.payload
+    fetchAllPosts: (state, action) => {
+      state.post += action.payload
     },
     
     addpost: (state, action) => {
-      state.posts += action.payload
+      state.post += action.payload
+    },
+    deletepost: (state, action) => {
+      state.post -= action.payload
     },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions
+export const { fetchAllPosts, addpost, deletepost } = PostsSlice.actions
 
-export default counterSlice.reducer
+export default PostsSlice.reducer

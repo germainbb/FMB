@@ -31,7 +31,7 @@ export default function Contact() {
         </Text>
         <TouchableOpacity style={{ left: 20, flexDirection:"row", display: "flex"}}>
           <Feather name="heart" size={30} color="skyblue" style={{flex: 1, display: "flex"}}/>
-          <Text style={styles.likes}>10       people like your business </Text>
+          <Text style={styles.likes}>10 people like your business </Text>
         </TouchableOpacity>
         <Text style={styles.input}>business name</Text>
         <Text selectable style={styles.text}>
