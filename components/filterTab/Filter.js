@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect, RefreshControl } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -12,10 +12,12 @@ import {
   Alert,
   Linking,
   BackHandler,
+  ActivityIndicator,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import Carousel from "../dashboard/Carousel";
+import Largeview from "../dashboard/Largeview";
 //import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
@@ -103,6 +105,8 @@ const Filter = () => {
   const [modalvisible, setModalvisible] = useState(false);
   const [mobile_no, setmobile_no] = useState("0776778798");
   const [Posts, setPosts] = useState([]);
+  const [show, setshow] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
@@ -110,24 +114,28 @@ const Filter = () => {
   //console.log("this is the state" + Posts)
 
   useEffect(() => {
-    const fetchposts = async () => {
-      const posts = query(
-        collection(db, "users", userid, "posts")
-        // orderBy("timeStamp", "desc")
-      );
-      const querySnapshot = await getDocs(posts);
-
-      querySnapshot.docs.forEach((doc) => {
-        console.log(doc.id, " => ", doc.data());
-        const info = []
-        info.push({key:doc.id,...doc.data()})
-        setPosts(info);
-        console.log(Posts)
-      });
-      
-    };
-    fetchposts();
+    setshow(true);
+    Bringposts();
   }, []);
+
+   const Bringposts = async () => {
+    const posts = query(
+      collection(db, "users", userid, "posts")
+      // orderBy("timeStamp", "desc")
+    );
+    const querySnapshot = await getDocs(posts);
+    setRefresh(false);
+    const info = [];
+    querySnapshot.docs.map((doc) => {
+      //console.log(doc.id, " => ", doc.data());
+
+      info.push({ key: doc.id, ...doc.data() });
+
+      //console.log(Posts);
+    });
+    setPosts(info);
+    //dispatch(fetchAllPosts(info))
+  };
 
   //console.log("post", Posts)
   const navigation = useNavigation();
@@ -139,6 +147,9 @@ const Filter = () => {
   const personalScreen = () => {
     navigation.navigate("myposts1");
   };
+  const largeview = (props) => {
+    navigation.navigate("Largeview", props);
+  };
 
   const setstatusFilter = (status) => {
     if (status !== "all") {
@@ -149,15 +160,17 @@ const Filter = () => {
     }
     setstatus(status);
   };
-  const renderItem = ({ item, key }) => {
 
+
+
+  const renderItem = ({ item }) => {
     return (
-      <View key={key} style={styles.itemContainer}>
+      <View key={item.key} style={styles.itemContainer}>
         <View style={styles.profile}>
           <Image
             style={styles.profileImage}
             source={{
-              uri: item.profileImage
+              uri: item.profileImage,
             }}
           />
           <Text
@@ -170,11 +183,11 @@ const Filter = () => {
             numberOfLines={2}
             style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
           >
-            {item.timestamp.toDate().toLocaleString('en')}
+            {item.timestamp.toDate().toLocaleString("en")}
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => setModalvisible(true)}
+          onPress={()=> largeview(item)}
           style={styles.itemLogo}
         >
           <Image
@@ -186,7 +199,7 @@ const Filter = () => {
           />
         </TouchableOpacity>
         <View style={styles.itemBody}>
-          <Text style={styles.itemName}>{item.description}</Text>
+          <Text style={styles.itemName}>K{item.price}</Text>
           <TouchableOpacity onPress={personalScreen}>
             <MaterialIcons name="store" size={24} color="green" />
 
@@ -201,8 +214,82 @@ const Filter = () => {
             },
           ]}
         >
-          <Text>{item.price}</Text>
+          <Text>{item.description}</Text>
         </View>
+        {/* MODAL START */}
+      
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalvisible}
+        onRequestClose={({ item }) => {
+          Alert.alert("Modal has been closed.");
+          setModalvisible(!modalvisible);
+        }}
+      >
+        <ScrollView >
+          <View style={styles.centeredView}>
+            <View  style={styles.modalView}>
+              <TouchableOpacity
+                style={{
+                  display: "flex",
+                  bottom: 10,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+                onPress={() => setModalvisible(!modalvisible)}
+              >
+                <Text style={{ display: "flex", flex: 1 }}>
+                {item.timestamp.toDate().toLocaleString("en")}
+                </Text>
+                <FontAwesome name="times" size={30} color="black" />
+              </TouchableOpacity>
+              <View style={styles.profilepic}>
+                <Image
+                  style={styles.profileimage}
+                  source={{
+                    uri: item.profileImage,
+                  }}
+                />
+                <Text style={{ alignSelf: "center" }}>{item.name}</Text>
+              </View>
+              <Image
+                resizeMode="contain"
+                style={styles.image}
+                source={{
+                  uri:item.profileImage,
+                }}
+              />
+              <View style={styles.itembody}>
+                <Text style={styles.itemPrice}>K {item.price}</Text>
+              </View>
+              <Text style={styles.modalText}>{item.description}</Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+              {item.description}
+              </Text>
+              <View style={styles.contact}>
+                <TouchableOpacity
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={onSubmit}
+                >
+                  <Text style={styles.textStyle}>seller details</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    Linking.openURL(
+                      "http://api.whatsapp.com/send?phone=26" + item.phone
+                    );
+                  }}
+                  style={{ flex: 1, left: width * 0.18 }}
+                >
+                  <FontAwesome name="whatsapp" size={45} color="green" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </Modal>
+      {/* MODAL END */}
       </View>
     );
   };
@@ -258,90 +345,18 @@ const Filter = () => {
       </ScrollView>
 
       <FlatList
-        ListHeaderComponent={<Carousel />}s
+        ListHeaderComponent={<Carousel />}
         numColumns={2}
         data={Posts}
-        keyExtractor={(item)=> item.key.toString}
+        keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
         style={{ marginBottom: 110 }}
-        refreshing={true}
+        onRefresh={()=>Bringposts()}
+        refreshing={refresh}
       />
-      {/* MODAL START */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalvisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalvisible(!modalvisible);
-        }}
-      >
-        <ScrollView>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                style={{
-                  display: "flex",
-                  bottom: 10,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-                onPress={() => setModalvisible(!modalvisible)}
-              >
-                <Text style={{ display: "flex", flex: 1 }}>date posted</Text>
-                <FontAwesome name="times" size={30} color="black" />
-              </TouchableOpacity>
-              <View style={styles.profilepic}>
-                <Image
-                  style={styles.profileimage}
-                  source={{
-                    uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-                  }}
-                />
-                <Text style={{ alignSelf: "center" }}>
-                  shoprite (Business or username username username username)
-                </Text>
-              </View>
-              <Image
-                resizeMode="contain"
-                style={styles.image}
-                source={{
-                  uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-                }}
-              />
-              <View style={styles.itembody}>
-                <Text style={styles.itemPrice}>K30,000,000,000</Text>
-              </View>
-              <Text style={styles.modalText}>name of object </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                description frtew hhhfhhfd uhudhfisbs ucduhussigdhhfyrjuu
-                fgrhyhsgd tuqwerty qwerty lorem ipsum hejddjfsj hejddjfsjfgda
-                fnc ddhdhsj hfhh righth germainge germain germain germain
-              </Text>
-              <View style={styles.contact}>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={onSubmit}
-                >
-                  <Text style={styles.textStyle}>seller details</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    Linking.openURL(
-                      "http://api.whatsapp.com/send?phone=26" + mobile_no
-                    );
-                  }}
-                  style={{ flex: 1, left: width * 0.18 }}
-                >
-                  <FontAwesome name="whatsapp" size={45} color="green" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </Modal>
-      {/* MODAL END */}
+      {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
+      
     </View>
   );
 };
@@ -374,7 +389,7 @@ const styles = StyleSheet.create({
     color: "#ff8c00",
   },
   itemContainer: {
-    display:"flex",
+    display: "flex",
     flex: 0.5,
     //padding: 2,
     width: "50%",
@@ -391,7 +406,7 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     //width: width,
-    height: height*0.25,
+    height: height * 0.25,
   },
   itemBody: {
     justifyContent: "space-between",
