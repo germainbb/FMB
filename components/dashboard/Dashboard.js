@@ -7,14 +7,30 @@ import {
   StyleSheet,
   Image,
   Dimensions,
-  Modal,
+  ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import Carousel from "../dashboard/Carousel";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
+import { auth, db } from "../../components/dashboard/firebase";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  orderBy,
+  collection,
+  doc,
+  getDoc,
+  collectionGroup,
+  query,
+  where,
+  getDocs,
+  arrayRemove,
+  arrayUnion,
+  deleteDoc,
+} from "firebase/firestore";
 
 const { width, height } = Dimensions.get("window");
 
@@ -72,9 +88,38 @@ const myposts = [
 
 export default function Dashboard() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [Posts, setPosts] = useState([]);
+  const [show, setshow] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
-  const onSubmit = () => {
-    setModalVisible(!modalVisible);
+  const userid = useSelector((state) => state.user.currentUser);
+  useEffect(() => {
+    setshow(true);
+    Bringposts();
+  }, []);
+  const Bringposts = async () => {
+    const posts = query(
+      collection(db, "users", userid, "posts"),
+      orderBy("timestamp", "desc")
+    );
+    const querySnapshot = await getDocs(posts);
+    setRefresh(false);
+    
+    const info = [];
+    querySnapshot.docs.map((doc) => {
+      //console.log(doc.id, " => ", doc.data());
+
+      info.push({ key: doc.id, ...doc.data() });
+    });
+    setPosts(info);
+    //console.log(Posts);
+    setshow(false);
+    //dispatch(fetchAllPosts(info))
+  };
+
+
+  const onSubmit = (props) => {
+    navigation.navigate("Delete", props)
   };
 
   const navigation = useNavigation();
@@ -88,16 +133,22 @@ export default function Dashboard() {
     navigation.navigate("contact")
   }
 
-  const RenderItem = ({ item, index }) => {
+  const RenderItem = ({ item }) => {
     return (
-      <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+      <View key={item.key} style={styles.itemContainer}>
+        <TouchableOpacity onPress={()=>onSubmit(item)}>
+        <Text
+            numberOfLines={2}
+            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+          >
+            {item.timestamp.toDate().toLocaleString("en")}
+          </Text>
           <View style={styles.itemLogo}>
             <Image
               resizeMode="contain"
               style={styles.itemImage}
               source={{
-                uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+                uri: item.profileImage
               }}
             />
           </View>
@@ -114,7 +165,7 @@ export default function Dashboard() {
             },
           ]}
         >
-          <Text>{item.status}</Text>
+          <Text>{item.description}</Text>
         </View>
       </View>
     );
@@ -158,63 +209,19 @@ export default function Dashboard() {
           <Ionicons name="add-sharp" size={30} color="black" />
         </TouchableOpacity>
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <ScrollView>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                style={{ marginLeft: width * 0.5, bottom: 10 }}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <FontAwesome name="times" size={30} color="black" />
-              </TouchableOpacity>
-              <Image
-                resizeMode="contain"
-                style={styles.image}
-                source={{
-                  uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-                }}
-              />
-              <View style={styles.itembody}>
-                <Text style={styles.itemPrice}>K30,00</Text>
-                
-              </View>
-              <Text style={styles.modalText}>name of object </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                description frtew hhhfhhfd uhudhfisbs ucduhussigdhhfyrjuu
-                fgrhyhsgd tuqwerty qwerty lorem ipsum hejddjfsj hejddjfsjfgda
-                fnc ddhdhsj hfhh righth germainge germain germain germain
-              </Text>
-              <View style={styles.contact}>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={onSubmit}
-                >
-                  <Text style={styles.textStyle}>Delete this post</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </Modal>
-      {/* //INDIVIDUAL POSTS */}
       <View>
-        <FlatList
-          numColumns={2}
-          data={myposts}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={RenderItem}
-          // itemSeparatorComponent={separator}
-          style={{ marginBottom: 190 }}
-        />
+      <FlatList
+        ListHeaderComponent={<Carousel />}
+        numColumns={2}
+        data={Posts}
+        keyExtractor={(item) => item.key.toString()}
+        renderItem={RenderItem}
+        //itemSeparatorComponent={separator}
+        style={{ marginBottom: 220 }}
+        onRefresh={() => Bringposts()}
+        refreshing={refresh}
+      />
+      {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
       </View>
     </View>
   );
@@ -230,17 +237,24 @@ const styles = StyleSheet.create({
     backgroundColor: "lightblue",
   },
   itemContainer: {
+    display: "flex",
+    flex: 0.5,
+    //padding: 2,
     width: "50%",
     marginHorizontal: 3,
     backgroundColor: "white",
     marginBottom: 5,
   },
   itemLogo: {
-    padding: 10,
+    padding: 5,
+    display: "flex",
   },
   itemImage: {
-    width: 120,
-    height: 150,
+    position: "relative",
+    flex: 1,
+    display: "flex",
+    //width: width,
+    height: height * 0.25,
   },
   itemBody: {
     justifyContent: "space-between",
@@ -295,28 +309,5 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  centeredView: {
-    flex: 1,
-    //backgroundColor: "black",
-    alignItems: "center",
-    marginTop: "70%",
-    width: "80%",
-    left: "10%",
-    bottom: "15%",
-  },
-  modalView: {
-    display: "flex",
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "darkorange",
-    shadowOffset: {
-      width: 0,
-      height: 50,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
+  
 });

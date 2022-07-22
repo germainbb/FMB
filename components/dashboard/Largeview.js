@@ -13,9 +13,9 @@ const Largeview = (props) => {
     const navigation = useNavigation();
 
     const item = props.route.params
-    console.log(item.price)
-    const onSubmit = () => {
-        navigation.navigate("contact1");
+    
+    const onSubmit = (props) => {
+        navigation.navigate("contact1", props);
         
       };
   return (
@@ -62,7 +62,7 @@ const Largeview = (props) => {
               <View style={styles.contact}>
                 <TouchableOpacity
                   style={[styles.button, styles.buttonClose]}
-                  onPress={onSubmit}
+                  onPress={()=>onSubmit(item.user)}
                 >
                   <Text style={styles.textStyle}>seller details</Text>
                 </TouchableOpacity>

@@ -23,6 +23,7 @@ import Add from "../dashboard/Add";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Edit from "../dashboard/Edit";
 import Largeview from "../dashboard/Largeview";
+import Delete from "../dashboard/Delete";
 import Contact from "../dashboard/Contact";
 import Workers from "../Workers/Workers";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -68,6 +69,15 @@ const Dash = () => {
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="Delete"
+        component={Delete}
+        options={{
+          headerShown: false,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+          presentation: 'transparentModal'
         }}
       />
     </Stack.Navigator>

@@ -1,4 +1,9 @@
-import React, { useState, useLayoutEffect, useEffect, RefreshControl } from "react";
+import React, {
+  useState,
+  useLayoutEffect,
+  useEffect,
+  RefreshControl,
+} from "react";
 import {
   StyleSheet,
   FlatList,
@@ -38,16 +43,17 @@ import {
   arrayUnion,
   deleteDoc,
 } from "firebase/firestore";
+import { listTab } from "../dashboard/Names";
 
 const { width, height } = Dimensions.get("window");
 
-const listTab = [
-  { status: "all" },
-  { status: "purple" },
-  { status: "green" },
-  { status: "red" },
-  { status: "black" },
-];
+// const listTab = [
+//   { status: "all" },
+//   { status: "purple" },
+//   { status: "green" },
+//   { status: "red" },
+//   { status: "black" },
+// ];
 const data = [
   {
     profileImage: "",
@@ -100,8 +106,8 @@ const data = [
   },
 ];
 const Filter = () => {
-  const [status, setstatus] = useState("all");
-  const [datalist, setDatalist] = useState(data);
+  const [name, setname] = useState("all");
+  const [datalist, setDatalist] = useState();
   const [modalvisible, setModalvisible] = useState(false);
   const [mobile_no, setmobile_no] = useState("0776778798");
   const [Posts, setPosts] = useState([]);
@@ -118,50 +124,46 @@ const Filter = () => {
     Bringposts();
   }, []);
 
-   const Bringposts = async () => {
+  const Bringposts = async () => {
     const posts = query(
-      collection(db, "users", userid, "posts")
-      // orderBy("timeStamp", "desc")
+      collection(db, "users", userid, "posts"),
+      orderBy("timestamp", "desc")
     );
     const querySnapshot = await getDocs(posts);
     setRefresh(false);
+    
     const info = [];
     querySnapshot.docs.map((doc) => {
       //console.log(doc.id, " => ", doc.data());
 
       info.push({ key: doc.id, ...doc.data() });
-
-      //console.log(Posts);
     });
     setPosts(info);
+    setDatalist(Posts)
+    setshow(false);
     //dispatch(fetchAllPosts(info))
   };
 
   //console.log("post", Posts)
   const navigation = useNavigation();
-  const onSubmit = () => {
-    navigation.navigate("contact1");
-    setModalvisible(!modalvisible);
-  };
+ 
 
-  const personalScreen = () => {
-    navigation.navigate("myposts1");
+  const personalScreen = (props) => {
+    navigation.navigate("myposts1", props);
   };
   const largeview = (props) => {
     navigation.navigate("Largeview", props);
   };
 
-  const setstatusFilter = (status) => {
-    if (status !== "all") {
+  const setstatusFilter = (name) => {
+    if (name !== "all") {
       //purple and green
-      setDatalist([...data.filter((e) => e.status === status)]);
+      setDatalist([...Posts.filter((e) => e.name === name)]);
     } else {
-      setDatalist(data);
+      setDatalist(Posts);
     }
-    setstatus(status);
+    setname(name);
   };
-
-
 
   const renderItem = ({ item }) => {
     return (
@@ -187,7 +189,7 @@ const Filter = () => {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={()=> largeview(item)}
+          onPress={() => largeview(item)}
           style={styles.itemLogo}
         >
           <Image
@@ -200,7 +202,7 @@ const Filter = () => {
         </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>K{item.price}</Text>
-          <TouchableOpacity onPress={personalScreen}>
+          <TouchableOpacity onPress={()=>personalScreen(item)}>
             <MaterialIcons name="store" size={24} color="green" />
 
             <Text>stock</Text>
@@ -210,86 +212,13 @@ const Filter = () => {
           style={[
             styles.itemStatus,
             {
-              backgroundColor: item.status === "purple" ? "purple" : "#69c080",
+              backgroundColor: item.name === "purple" ? "purple" : "#69c080",
             },
           ]}
         >
           <Text>{item.description}</Text>
         </View>
-        {/* MODAL START */}
-      
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalvisible}
-        onRequestClose={({ item }) => {
-          Alert.alert("Modal has been closed.");
-          setModalvisible(!modalvisible);
-        }}
-      >
-        <ScrollView >
-          <View style={styles.centeredView}>
-            <View  style={styles.modalView}>
-              <TouchableOpacity
-                style={{
-                  display: "flex",
-                  bottom: 10,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-                onPress={() => setModalvisible(!modalvisible)}
-              >
-                <Text style={{ display: "flex", flex: 1 }}>
-                {item.timestamp.toDate().toLocaleString("en")}
-                </Text>
-                <FontAwesome name="times" size={30} color="black" />
-              </TouchableOpacity>
-              <View style={styles.profilepic}>
-                <Image
-                  style={styles.profileimage}
-                  source={{
-                    uri: item.profileImage,
-                  }}
-                />
-                <Text style={{ alignSelf: "center" }}>{item.name}</Text>
-              </View>
-              <Image
-                resizeMode="contain"
-                style={styles.image}
-                source={{
-                  uri:item.profileImage,
-                }}
-              />
-              <View style={styles.itembody}>
-                <Text style={styles.itemPrice}>K {item.price}</Text>
-              </View>
-              <Text style={styles.modalText}>{item.description}</Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              {item.description}
-              </Text>
-              <View style={styles.contact}>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={onSubmit}
-                >
-                  <Text style={styles.textStyle}>seller details</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    Linking.openURL(
-                      "http://api.whatsapp.com/send?phone=26" + item.phone
-                    );
-                  }}
-                  style={{ flex: 1, left: width * 0.18 }}
-                >
-                  <FontAwesome name="whatsapp" size={45} color="green" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </Modal>
-      {/* MODAL END */}
+        
       </View>
     );
   };
@@ -324,20 +253,20 @@ const Filter = () => {
         <View style={styles.listTab}>
           {listTab.map((e) => (
             <TouchableOpacity
-              key={e.status}
+              key={e.name}
               style={[
                 styles.btnTab,
-                status === e.status && styles.btnTabActive,
+                name === e.name && styles.btnTabActive,
               ]}
-              onPress={() => setstatusFilter(e.status)}
+              onPress={() => setstatusFilter(e.name)}
             >
               <Text
                 style={[
                   styles.textTab,
-                  status === e.status && styles.textTabActive,
+                  name === e.name && styles.textTabActive,
                 ]}
               >
-                {e.status}
+                {e.name}
               </Text>
             </TouchableOpacity>
           ))}
@@ -347,16 +276,15 @@ const Filter = () => {
       <FlatList
         ListHeaderComponent={<Carousel />}
         numColumns={2}
-        data={Posts}
+        data={datalist}
         keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
         style={{ marginBottom: 110 }}
-        onRefresh={()=>Bringposts()}
+        onRefresh={() => Bringposts()}
         refreshing={refresh}
       />
       {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
-      
     </View>
   );
 };
@@ -374,7 +302,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderColor: "black",
-    padding: 10,
+    padding: 5,
     justifyContent: "center",
   },
   textTab: {

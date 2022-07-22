@@ -183,6 +183,7 @@ const Add = ({ navigation }, props) => {
     });
 
     const docRef = await addDoc(collection(db, "users", userid, "posts"), {
+      user: userid,
       profileImage: image,
       description: props.description,
       timestamp: serverTimestamp(),
@@ -199,7 +200,7 @@ const Add = ({ navigation }, props) => {
         () => Alert.alert("Oops", "try again buddy");
       });
 
-      navigation.goBack("dashboard")
+      navigation.navigate("home")
     // const imageRef = ref(storage, `images/${description}`);
     // const metadata = {
     //   contentType: "image/jpg",
@@ -324,6 +325,7 @@ const Add = ({ navigation }, props) => {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              maxLength={10}
               keyboardType="number-pad"
               placeholder="PRICE IN KWACHA"
               value={value}            
@@ -369,11 +371,12 @@ const Add = ({ navigation }, props) => {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+            maxLength={10}
               keyboardType="number-pad"
               value={value}            
               onBlur={onBlur}            
               onChangeText={value => onChange(value)}
-              placeholder="PHONE NO"
+              placeholder="PHONE NO for whatsapp"
               style={{
                 borderColor: "red",
                 borderBottomWidth: 5,
