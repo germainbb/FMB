@@ -2,7 +2,7 @@ import React, {
   useState,
   useLayoutEffect,
   useEffect,
-  RefreshControl,
+  RefreshControl,useRef
 } from "react";
 import {
   StyleSheet,
@@ -43,84 +43,35 @@ import {
   arrayUnion,
   deleteDoc,
 } from "firebase/firestore";
+import { listTab } from "../dashboard/Names";
 
 const { width, height } = Dimensions.get("window");
 
-const listTab = [
-  { status: "all" },
-  { status: "purple" },
-  { status: "green" },
-  { status: "red" },
-  { status: "black" },
-];
-const data = [
-  {
-    profileImage: "",
-    caption: "",
-    username: "is",
-    name: "k1000",
-    status: "purple",
-  },
-  {
-    profileImage: "",
-    caption: "",
-    username: "billionaire",
-    name: "k200",
-    status: "all",
-  },
-  {
-    profileImage: "",
-    caption: "",
-    username: "germain",
-    name: "k500",
-    status: "green",
-  },
-  {
-    profileImage: "",
-    caption: "",
-    username: "is",
-    name: "k100",
-    status: "purple",
-  },
-  {
-    profileImage: "",
-    caption: "",
-    username: "billionaire",
-    name: "k200",
-    status: "all",
-  },
-  {
-    profileImage: "",
-    caption: "",
-    username: "germain",
-    name: "k500",
-    status: "green",
-  },
-  {
-    profileImage: "",
-    caption: "",
-    username: "germain",
-    name: "k500",
-    status: "green",
-  },
-];
+
 const Shops = () => {
-  const [status, setstatus] = useState("all");
-  const [datalist, setDatalist] = useState(data);
+  const [name, setname] = useState("all");
+  const [datalist, setDatalist] = useState();
   const [modalvisible, setModalvisible] = useState(false);
   const [mobile_no, setmobile_no] = useState("0776778798");
   const [Posts, setPosts] = useState([]);
   const [show, setshow] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [arrow, setarrow] = useState(false);
+  const [contentVerticalOffset, setContentVerticalOffset] = useState(0);
+  const CONTENT_OFFSET_THRESHOLD = 300;
 
+  const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   //const Posts = useSelector((state) => state.posts.post)
   //console.log("this is the state" + Posts)
+   
+  
 
   useEffect(() => {
     setshow(true);
     Bringposts();
+    setstatusFilter();
   }, []);
 
   const Bringposts = async () => {
@@ -138,16 +89,14 @@ const Shops = () => {
       info.push({ key: doc.id, ...doc.data() });
     });
     setPosts(info);
+    setDatalist(Posts);
     setshow(false);
     //dispatch(fetchAllPosts(info))
   };
 
   //console.log("post", Posts)
   const navigation = useNavigation();
-  const onSubmit = () => {
-    navigation.navigate("contact1");
-    setModalvisible(!modalvisible);
-  };
+ 
 
   const personalScreen = (props) => {
     navigation.navigate("myposts1", props);
@@ -156,15 +105,17 @@ const Shops = () => {
     navigation.navigate("Largeview", props);
   };
 
-  const setstatusFilter = (status) => {
-    if (status !== "all") {
+  const setstatusFilter = (name) => {
+    if (name !== "all") {
       //purple and green
-      setDatalist([...data.filter((e) => e.status === status)]);
+      setDatalist([...Posts.filter((e) => e.name === name)]);
     } else {
-      setDatalist(data);
+      setDatalist(Posts);
     }
-    setstatus(status);
+    setname(name);
   };
+
+
 
   const renderItem = ({ item }) => {
     return (
@@ -173,14 +124,14 @@ const Shops = () => {
           <Image
             style={styles.profileImage}
             source={{
-              uri: item.profileImage,
+              uri: item.profilepic,
             }}
           />
           <Text
             numberOfLines={2}
             style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
           >
-            {item.category}
+            {item.businessname}
           </Text>
           <Text
             numberOfLines={2}
@@ -209,6 +160,7 @@ const Shops = () => {
             <Text>stock</Text>
           </TouchableOpacity>
         </View>
+        <Text style={styles.itemName}>{item.name}</Text>
         <View
           style={[
             styles.itemStatus,
@@ -254,20 +206,17 @@ const Shops = () => {
         <View style={styles.listTab}>
           {listTab.map((e) => (
             <TouchableOpacity
-              key={e.status}
-              style={[
-                styles.btnTab,
-                status === e.status && styles.btnTabActive,
-              ]}
-              onPress={() => setstatusFilter(e.status)}
+              key={e.name}
+              style={[styles.btnTab, name === e.name && styles.btnTabActive]}
+              onPress={() => setstatusFilter(e.name)}
             >
               <Text
                 style={[
                   styles.textTab,
-                  status === e.status && styles.textTabActive,
+                  name === e.name && styles.textTabActive,
                 ]}
               >
-                {e.status}
+                {e.name}
               </Text>
             </TouchableOpacity>
           ))}
@@ -275,9 +224,13 @@ const Shops = () => {
       </ScrollView>
 
       <FlatList
+        ref={listRef}
+        onScroll={event => {
+          setContentVerticalOffset(event.nativeEvent.contentOffset.y);
+        }}
         ListHeaderComponent={<Carousel />}
         numColumns={2}
-        data={Posts}
+        data={datalist}
         keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
@@ -285,6 +238,19 @@ const Shops = () => {
         onRefresh={() => Bringposts()}
         refreshing={refresh}
       />
+      {contentVerticalOffset > CONTENT_OFFSET_THRESHOLD && (
+        
+        <Feather
+          name="arrow-up-circle"
+          size={60}
+          color="orange"
+          style={styles.scrollTopButton}
+          onPress={()=>
+          {listRef.current.scrollToOffset({ offset: 0,  animated: true});
+          }
+        }
+        />
+    )}
       {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
     </View>
   );
@@ -293,6 +259,11 @@ const Shops = () => {
 export default Shops;
 
 const styles = StyleSheet.create({
+  scrollTopButton: {
+    position: "absolute",
+    bottom: 130,
+    right: 10,
+  },
   listTab: {
     flexDirection: "row",
     alignSelf: "center",

@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as ImagePicker from "expo-image-picker";
@@ -17,12 +18,16 @@ import { useForm, Controller } from "react-hook-form";
 import { useNavigation } from "@react-navigation/native";
 import { updateDoc, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import {useSelector, useDispatch} from "react-redux";
-import { db } from "./firebase";
+import { db, storage } from "./firebase";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getDownloadURL, ref, uploadBytes  } from "firebase/storage";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Edit(props) {
   const [image, setImage] = useState(null);
+  const [url, seturl] = useState(null);
+  const [show, setshow] = useState(null);
 
   //const count = useSelector((state) => state.counter.value)
   const userid = useSelector((state) => state.user.currentUser)
@@ -45,7 +50,7 @@ export default function Edit(props) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [1, 1],
       quality: 1,
     });
 
@@ -72,21 +77,64 @@ export default function Edit(props) {
   const onSubmit = async(props) => {
     console.log(userid);
     console.log( props);
-    await updateDoc(doc(db, "users",userid), {
-      profileImage: image,
-      description: props.businessDescription,
-      timestamp: serverTimestamp(),
-      name: props.businessName,
-      phone: props.phoneNumber,
-      location: props.shopLocation,
-    })
-      .then(() => {
-        navigation.navigate("contact"); 
-        Alert.alert(" details updated successfully!!");
+
+    setshow(true)
+    //upload image to storage and get download url
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", image, true);
+      xhr.send(null);
+    });
+
+    const imageRef = ref(storage, `${userid}/${props.name}`);
+    
+
+    await uploadBytes (
+      imageRef,
+      blob,
+    ).then(async()=>{
+      const downloadURL = await getDownloadURL(imageRef);
+      
+      //upload post
+      await updateDoc(doc(db, "users",userid), {
+        profileImage: downloadURL,
+        description: props.businessDescription,
+        timestamp: serverTimestamp(),
+        name: props.businessName,
+        phone: props.phoneNumber,
+        location: props.shopLocation,
       })
-      .catch(() => {
-        () => Alert.alert("Oops", "try again buddy");
-      });
+        .then(async() => {
+          setshow(false)
+          navigation.navigate("contact"); 
+          Alert.alert(" details updated successfully!!");
+            try {
+              await AsyncStorage.setItem("name", props.businessName);
+              await AsyncStorage.setItem("image", downloadURL);
+              //console.log(email + password);
+            } catch (e) {
+              // saving error
+              console.log(e);
+            }
+        })
+        .catch(() => {
+          () => Alert.alert("Oops", "try again buddy");
+        });
+
+      blob.close()
+    }).catch(
+      () => Alert.alert(" image not uploaded !!")
+    )
+
+    
     
     
   };
@@ -101,6 +149,7 @@ export default function Edit(props) {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+            autoCapitalize="none"
               style={styles.input}
               onBlur={onBlur}
               onChangeText={value => onChange(value)}
@@ -118,6 +167,7 @@ export default function Edit(props) {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+            autoCapitalize="none"
               style={styles.input}
               onBlur={onBlur}
               onChangeText={value => onChange(value)}
@@ -135,6 +185,7 @@ export default function Edit(props) {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+            autoCapitalize="none"
               placeholder="Libala,Lusaka, or google maps location code"
               style={styles.input}
               onBlur={onBlur}
@@ -193,6 +244,7 @@ export default function Edit(props) {
             onPress={handleSubmit((data)=>onSubmit(data))}
           />
         </View>
+        {<ActivityIndicator size="large" color="#0000ff" animating={show} /> }
       </View>
     </ScrollView>
   );

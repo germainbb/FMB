@@ -10,12 +10,12 @@ import {
   Alert,
   TextInput,
   Dimensions,
-  Pressable,
+  ActivityIndicator,
 } from "react-native";
 import { Camera } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes  } from "firebase/storage";
 import { db, storage } from "../../components/dashboard/firebase";
 import { updateCurrentUser } from "firebase/auth";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -32,6 +32,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { LogBox } from 'react-native';
 import {useSelector, useDispatch} from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 LogBox.ignoreLogs(['Setting a timer']);
 
@@ -41,13 +42,14 @@ const { width, height } = Dimensions.get("window");
 const Stack = createNativeStackNavigator();
 
 const Add = ({ navigation }, props) => {
+  const [show, setshow] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
    const [category, setcategory] = useState("");
-  // const [name, setname] = useState("");
+  const [url, seturl] = useState();
   // const [description, setdescription] = useState("");
   // const [price, setprice] = useState(0);
   // const [phone, setphone] = useState("");
@@ -126,49 +128,14 @@ const Add = ({ navigation }, props) => {
     return <Text>No access to camera</Text>;
   }
 
-  // const uploadImg = async (image) => {
-  //   const img = image;
-  //   console.log("image:" + img);
-  //   const metadata = {
-  //     contentType: image.type,
-  //   };
-  //   const storageRef = ref(storage, "rav4");
-  //   const UploadTask = await uploadBytesResumable(storageRef, img, metadata);
-
-  //   UploadTask.on(
-  //     "state_changed",
-  //     (snapshot) => {
-  //       const prog = Math.round(
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-  //       );
-  //       setProgress(prog);
-  //       Alert.alert("Oops", "try again germain");
-  //     },
-  //     (err) => {
-  //       Alert.alert(err + "not working");
-  //     },
-  //     () => {
-  //       getDownloadURL(UploadTask.snapshot.ref)
-  //         .then((url) => console.log(`url: ${url}`))
-  //         .catch(() => {
-  //           Alert.alert("Oops", "try again germain");
-  //         });
-  //     }
-  //   );
-  // };
-
+ 
   // UPLOADING POST TO FIREBASE FIRESTORE
-  
+  //TODO: After setting redux for posts to reduce queries, use asyncstorage to store businessName and profilePic
   const uploadPost = async (props) => {
-    console.log(props.name);
-    if (loading) return;
-
-    setLoading(true);
-
-    const uri = image;
-
+    //console.log(props.name);
+    setshow(true)
+    //upload image to storage and get download url
     const blob = await new Promise((resolve, reject) => {
-      const uri = image;
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
         resolve(xhr.response);
@@ -178,63 +145,52 @@ const Add = ({ navigation }, props) => {
         reject(new TypeError("Network request failed"));
       };
       xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
+      xhr.open("GET", image, true);
       xhr.send(null);
     });
 
-    const docRef = await addDoc(collection(db, "users", userid, "posts"), {
-      user: userid,
-      profileImage: image,
-      description: props.description,
-      timestamp: serverTimestamp(),
-      price: props.price,
-      name: props.name,
-      phone: props.phone,
-      category: props.category,
-      // profilepic: profilepic,
-      // likes: likes,
-      // likesByUsers: likesByUsers
-    })
-      .then(() => Alert.alert(" post uploaded successfully!!"))
-      .catch(() => {
-        () => Alert.alert("Oops", "try again buddy");
-      });
+    const imageRef = ref(storage, `${userid}/${props.name}`);
+    
 
-      navigation.navigate("home")
-    // const imageRef = ref(storage, `images/${description}`);
-    // const metadata = {
-    //   contentType: "image/jpg",
-    // };
+    await uploadBytes (
+      imageRef,
+      blob,
+    ).then(async()=>{
+      const downloadURL = await getDownloadURL(imageRef);
+      const businessName = await AsyncStorage.getItem("name");
+      const profilepic = await AsyncStorage.getItem("image");
+      
+      //upload post
+      const docRef = await addDoc(collection(db, "users", userid, "posts"), {
+        user: userid,
+        businessname: businessName,
+        profilepic: profilepic,
+        profileImage: downloadURL,
+        description: props.description,
+        timestamp: serverTimestamp(),
+        price: props.price,
+        name: props.name,
+        phone: props.phone,
+        category: props.category,
+        
+      })
+        .then(() => {setshow(false); Alert.alert(" post uploaded successfully!!")})
+        .catch(() => {
+          () => Alert.alert("Oops", "try again buddy");
+        });
+  
 
-    // const UploadTask = await uploadBytesResumable(
-    //   imageRef,
-    //   blob,
-    //   metadata
-    // ).then(
-    //   () => Alert.alert(" image uploaded successfully!!"),
-    //   () => Alert.alert("Oops", "try again germain")
-    // )
-    // UploadTask.on(
-    //   "state_changed",
-    //   (snapshot) => {
-    //     const prog = Math.round(
-    //       (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-    //     );
-    //     setProgress(prog);
-    //   },
-    //   (err) => {
-    //     Alert.alert(err + "not working");
-    //   },
-    //   async () => {
-    //     Alert.alert("Oops", "try again germain");
-    //     const downloadURL = await getDownloadURL(imageRef);
-    //     await updateDoc(doc(db, "posts", docRef.id), {
-    //       imageUrl: downloadURL,
-    //     });
-    //     blob.close();
-    //     navigation.goBack("dashboard");
-    //   }
-    // );
+      blob.close()
+    }).catch(
+      () => Alert.alert(" image not uploaded !!")
+    )
+    
+
+    //upload image to storage and get download url
+
+    
+      navigation.goBack()
+
   };
 
   
@@ -303,6 +259,7 @@ const Add = ({ navigation }, props) => {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+              autoCapitalize="none"
               placeholder="example(SHOES or DRESS)"
               value={value}            
               onBlur={onBlur}            
@@ -349,6 +306,7 @@ const Add = ({ navigation }, props) => {
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
+            autoCapitalize="none"
               placeholder="SHORT DESCRIPTION (eg: JORDANS 1,...)"
               value={value}            
               onBlur={onBlur}            
@@ -430,6 +388,7 @@ const Add = ({ navigation }, props) => {
           POST
         </Text>
         </TouchableOpacity>
+        {<ActivityIndicator size="large" color="#0000ff" animating={show} /> }
       </View>
       <View style={{ marginBottom: 65 }}>
         <Text style={{ padding: 6 }}>

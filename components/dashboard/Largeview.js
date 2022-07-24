@@ -40,16 +40,16 @@ const Largeview = (props) => {
                 <Image
                   style={styles.profileimage}
                   source={{
-                    uri: item.profileImage   
+                    uri: item.profilepic 
                   }}
                 />
-                <Text style={{ alignSelf: "center" }}>{item.name}</Text>
+                <Text style={{ alignSelf: "center" }}>{item.businessname}</Text>
               </View>
               <Image
                 resizeMode="contain"
                 style={styles.image}
                 source={{
-                  uri:  item.profileImage 
+                  uri:  item.profileImage
                 }}
               />
               <View style={styles.itembody}>
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         display: "flex",
         backgroundColor: "white",
         borderRadius: 20,
-        padding: 35,
+        padding: 20,
         alignItems: "center",
         shadowColor: "darkorange",
         shadowOffset: {
@@ -128,7 +128,10 @@ const styles = StyleSheet.create({
         elevation: 5,
       },
       image: {
-        width: width * 0.7,
+        //paddingHorizontal: 0,
+        display: "flex",
+        flex: 2,
+        width: width * 0.8,
         height: height * 0.5,
       },
       itembody: {

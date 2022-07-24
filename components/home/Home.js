@@ -13,7 +13,7 @@ import Filter from "../filterTab/Filter";
 import Casual from "../casualDeals/Casual";
 import Shops from "../shops/Shops";
 import Dashboard from "../dashboard/Dashboard";
-import myPosts from "../dashboard/myPosts";
+import myPosts from "../dashboard/MyPosts";
 import Search from "../search/Search";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";

@@ -9,11 +9,11 @@ export const PostsSlice = createSlice({
   initialState,
   reducers: {
     fetchAllPosts: (state, action) => {
-      state.post.push(action.payload)
+      state.post = action.payload
     },
     
     addpost: (state, action) => {
-      state.post += action.payload
+      state.post = action.payload
     },
     deletepost: (state, action) => {
       state.post -= action.payload

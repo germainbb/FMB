@@ -18,7 +18,8 @@ import { useNavigation } from "@react-navigation/native";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { orderBy, collection, doc, deleteDoc } from "firebase/firestore";
-import { db } from "../../components/dashboard/firebase";
+import { db, storage } from "../../components/dashboard/firebase";
+import { ref, deleteObject } from "firebase/storage";
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,9 +29,20 @@ const Delete = (props) => {
   const item = props.route.params;
   const onSubmit = async () => {
     await deleteDoc(doc(db, "users", userid, "posts", item.key)).then(
-      Alert.alert("post deleted").catch(Alert.alert("something went wrong"))
-    );
-    console.log(item.key);
+      Alert.alert("post deleted")
+    ).catch(Alert.alert("something went wrong"))
+    
+    // Create a reference to the file to delete
+const desertRef = ref(storage, '${userid}/${item.name}');
+
+// Delete the file
+deleteObject(desertRef).then(() => {
+  // File deleted successfully
+  Alert.alert("post deleted")
+}).catch((error) => {
+  // Uh-oh, an error occurred!
+  Alert.alert("something went wrong")
+});
 
     navigation.navigate("dashboard");
   };

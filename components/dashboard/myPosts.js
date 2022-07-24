@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useLayoutEffect,
+  useEffect,
+  RefreshControl,
+  useRef
+} from "react";
 import {
   StyleSheet,
   FlatList,
@@ -9,105 +15,165 @@ import {
   Dimensions,
   TouchableOpacity,
   Modal,
-  TextInput,
-  Pressable,
   Alert,
   Linking,
+  BackHandler,
+  ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import Carousel from "./Carousel";
+import Largeview from "./Largeview";
+//import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchAllPosts } from "../../reduxTK/reducers/PostsSlice";
+import { auth, db } from "./firebase";
+import { onSnapshot } from "firebase/firestore";
+import {
+  orderBy,
+  collection,
+  doc,
+  getDoc,
+  collectionGroup,
+  query,
+  where,
+  getDocs,
+  arrayRemove,
+  arrayUnion,
+  deleteDoc,
+} from "firebase/firestore";
+import { listTab } from "./Names";
 
 const { width, height } = Dimensions.get("window");
 
-const listTab = [
-  { status: "all" },
-  { status: "purple" },
-  { status: "green" },
-  { status: "red" },
-  { status: "black" },
-];
-const data = [
-  {
-    username: "is",
-    name: "k1000",
-    status: "purplhdshgdgdhghshdshgdhdhghsgshshshsgshdsgdhbcbvdxgdvdgfssgfg",
-  },
-  {
-    username: "billionaire",
-    name: "k200",
-    status: "all",
-  },
-  {
-    username: "germain",
-    name: "k500",
-    status: "green",
-  },
-];
+// const listTab = [
+//   { status: "all" },
+//   { status: "purple" },
+//   { status: "green" },
+//   { status: "red" },
+//   { status: "black" },
+// ];
 
-const Filter = () => {
-  const [status, setstatus] = useState("all");
-  const [datalist, setDatalist] = useState(data);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [mobile_no, setmobile_no] = useState("0776778798")
+const MyPosts = (props) => {
+  const [name, setname] = useState("all");
+  const [datalist, setDatalist] = useState();
+  const [modalvisible, setModalvisible] = useState(false);
+  const [mobile_no, setmobile_no] = useState("0776778798");
+  const [Posts, setPosts] = useState([]);
+  const [show, setshow] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [arrow, setarrow] = useState(false);
+  const [contentVerticalOffset, setContentVerticalOffset] = useState(0);
+  const CONTENT_OFFSET_THRESHOLD = 300;
 
+  const listRef = useRef(null);
+  const userid = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
+  //const Posts = useSelector((state) => state.posts.post)
+  //console.log("this is the state" + Posts)
+
+  useEffect(() => {
+    setshow(true);
+    Bringposts();
+    setstatusFilter();
+  }, []);
+
+  const seller = props.route.params.user
+  const Bringposts = async () => {
+    const posts = query(
+      collection(db, "users", seller, "posts"),
+      orderBy("timestamp", "desc")
+    );
+    const querySnapshot = await getDocs(posts);
+    setRefresh(false);
+
+    const info = [];
+    querySnapshot.docs.map((doc) => {
+      //console.log(doc.id, " => ", doc.data());
+
+      info.push({ key: doc.id, ...doc.data() });
+    });
+    setPosts(info);
+    setDatalist(Posts);
+    setshow(false);
+    //dispatch(fetchAllPosts(info))
+  };
+
+  //console.log("post", Posts)
   const navigation = useNavigation();
 
-  const onSubmit = () => {
-    navigation.navigate("contact1");
-    setModalVisible(!modalVisible);
+  // const personalScreen = (props) => {
+  //   navigation.navigate("myposts1", props);
+  // };
+  const largeview = (props) => {
+    navigation.navigate("Largeview", props);
   };
 
-  const setstatusFilter = (status) => {
-    if (status !== "all") {
+  const setstatusFilter = (name) => {
+    if (name !== "all") {
       //purple and green
-      setDatalist([...data.filter((e) => e.status === status)]);
+      setDatalist([...Posts.filter((e) => e.name === name)]);
     } else {
-      setDatalist(data);
+      setDatalist(Posts);
     }
-    setstatus(status);
+    setname(name);
   };
-  const renderItem = ({ item, index }) => {
+
+  
+
+  const renderItem = ({ item }) => {
     return (
-      <View key={`View_${index}`} style={styles.itemContainer}>
+      <View key={item.key} style={styles.itemContainer}>
         <View style={styles.profile}>
           <Image
+            //defaultSource={basketball}
             style={styles.profileImage}
             source={{
-              uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
+              uri: item.profilepic,
             }}
           />
-          <Text>{item.username}</Text>
+          <Text
+            numberOfLines={2}
+            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+          >
+            {item.businessname}
+          </Text>
+          <Text
+            numberOfLines={2}
+            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+          >
+            {item.timestamp.toDate().toLocaleString("en")}
+          </Text>
         </View>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <View style={styles.itemLogo}>
-            <Image
-              resizeMode="contain"
-              style={styles.itemImage}
-              source={{
-                uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-              }}
-            />
-          </View>
+        <TouchableOpacity
+          onPress={() => largeview(item)}
+          style={styles.itemLogo}
+        >
+          <Image
+            resizeMode="contain"
+            style={styles.itemImage}
+            source={{
+              uri: item.profileImage,
+            }}
+          />
         </TouchableOpacity>
         <View style={styles.itemBody}>
-          <Text numberOfLines={1} style={styles.itemName}>
-            {item.name}
-          </Text>
-          <TouchableOpacity>
-            <Feather name="heart" size={24} color="skyblue" />
-            <Text>10m</Text>
-          </TouchableOpacity>
+          <Text style={styles.itemName}>K{item.price}</Text>
+          
         </View>
         <View
           style={[
             styles.itemStatus,
             {
-              backgroundColor: item.status === "purple" ? "purple" : "#69c080",
+              backgroundColor: item.name === "purple" ? "purple" : "#69c080",
             },
           ]}
         >
-          <Text numberOfLines={2}>{item.status}</Text>
+        <Text style={styles.itemName}>{item.name}</Text>
+          <Text style={{ fontWeight: "bold"}}>{item.description}</Text>
         </View>
       </View>
     );
@@ -116,26 +182,26 @@ const Filter = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;
   };
 
+
+  
+
   return (
     <View style={{ margin: 5 }}>
       <ScrollView horizontal>
         <View style={styles.listTab}>
           {listTab.map((e) => (
             <TouchableOpacity
-              key={e.status}
-              style={[
-                styles.btnTab,
-                status === e.status && styles.btnTabActive,
-              ]}
-              onPress={() => setstatusFilter(e.status)}
+              key={e.name}
+              style={[styles.btnTab, name === e.name && styles.btnTabActive]}
+              onPress={() => setstatusFilter(e.name)}
             >
               <Text
                 style={[
                   styles.textTab,
-                  status === e.status && styles.textTabActive,
+                  name === e.name && styles.textTabActive,
                 ]}
               >
-                {e.status}
+                {e.name}
               </Text>
             </TouchableOpacity>
           ))}
@@ -143,95 +209,45 @@ const Filter = () => {
       </ScrollView>
 
       <FlatList
+        ref={listRef}
+        onScroll={event => {
+          setContentVerticalOffset(event.nativeEvent.contentOffset.y);
+        }}
+        ListHeaderComponent={<Carousel />}
         numColumns={2}
         data={datalist}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
+        style={{ marginBottom: 110 }}
+        onRefresh={() => Bringposts()}
+        refreshing={refresh}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <ScrollView>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity
-                style={{ marginLeft: width * 0.5, bottom: 10 }}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <FontAwesome name="times" size={30} color="black" />
-              </TouchableOpacity>
-              <Image
-                resizeMode="contain"
-                style={styles.image}
-                source={{
-                  uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-                }}
-              />
-              <View style={styles.itembody}>
-                <Text style={styles.itemPrice}>K30,00</Text>
-                <TouchableOpacity style={{ left: width * 0.19 }}>
-                  <Feather name="heart" size={24} color="skyblue" />
-                  <Text>10m</Text>
-                </TouchableOpacity>
-              </View>
-              <Text style={styles.modalText}>name of object </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                description frtew hhhfhhfd uhudhfisbs ucduhussigdhhfyrjuu
-                fgrhyhsgd tuqwerty qwerty lorem ipsum hejddjfsj hejddjfsjfgda
-                fnc ddhdhsj hfhh righth germainge germain germain germain
-              </Text>
-              <View style={styles.contact}>
-                <TouchableOpacity
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={onSubmit}
-                >
-                  <Text style={styles.textStyle}>seller details</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    Linking.openURL(
-                      "http://api.whatsapp.com/send?phone=26" + mobile_no
-                    );
-                  }}
-                  style={{ flex: 1, left: width * 0.18 }}
-                >
-                  <FontAwesome name="whatsapp" size={45} color="green" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
-      </Modal>
+      {contentVerticalOffset > CONTENT_OFFSET_THRESHOLD && (
+        
+          <Feather
+            name="arrow-up-circle"
+            size={60}
+            color="orange"
+            style={styles.scrollTopButton}
+            onPress={()=>
+            {listRef.current.scrollToOffset({ offset: 0,  animated: true});
+            }
+          }
+          />
+      )}
+      {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
     </View>
   );
 };
 
-export default Filter;
+export default MyPosts;
 
 const styles = StyleSheet.create({
-  image: {
-    width: width * 0.6,
-    height: height * 0.45,
-  },
-  itembody: {
-    justifyContent: "space-between",
-    flexDirection: "row",
-  },
-  itemPrice: {
-    fontWeight: "bold",
-    right: width * 0.19,
-  },
-  contact: {
-    flexDirection: "row",
-    display: "flex",
-    top: 6,
+  scrollTopButton: {
+    position: "absolute",
+    bottom: 130,
+    right: 10,
   },
   listTab: {
     flexDirection: "row",
@@ -243,7 +259,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     borderBottomWidth: 1,
     borderColor: "black",
-    padding: 10,
+    padding: 5,
     justifyContent: "center",
   },
   textTab: {
@@ -258,6 +274,8 @@ const styles = StyleSheet.create({
     color: "#ff8c00",
   },
   itemContainer: {
+    display: "flex",
+    flex: 0.5,
     //padding: 2,
     width: "50%",
     marginHorizontal: 3,
@@ -265,23 +283,27 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   itemLogo: {
-    padding: 10,
+    padding: 5,
+    display: "flex",
   },
   itemImage: {
-    width: 120,
-    height: 140,
+    position: "relative",
+    flex: 1,
+    display: "flex",
+    //width: width,
+    height: height * 0.25,
   },
   itemBody: {
-    flex: 1,
-    paddingHorizontal: 10,
     justifyContent: "space-between",
     flexDirection: "row",
+    flex: 1,
+    paddingHorizontal: 10,
     alignItems: "center",
   },
   itemName: {
     fontWeight: "bold",
     fontSize: 16,
-    width: 1,
+    alignItems: "flex-end",
   },
   itemStatus: {
     backgroundColor: "green",
@@ -294,30 +316,22 @@ const styles = StyleSheet.create({
     height: 20,
     margin: 3,
   },
+  profileimage: {
+    borderRadius: 9,
+    width: 60,
+    height: 60,
+    margin: 3,
+  },
   profile: {
+    display: "flex",
+
     flexDirection: "row",
   },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
+  profilepic: {
     flex: 1,
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-    fontWeight: "bold",
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   centeredView: {
     flex: 1,
@@ -343,16 +357,40 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  itemBody: {
+  image: {
+    width: width * 0.6,
+    height: height * 0.45,
+  },
+  itembody: {
     justifyContent: "space-between",
     flexDirection: "row",
-    flex: 1,
-    paddingHorizontal: 10,
-    alignItems: "center",
   },
-  itemName: {
+  itemPrice: {
     fontWeight: "bold",
-    fontSize: 16,
-    alignItems: "flex-end",
+    right: width * 0.19,
+  },
+  contact: {
+    flexDirection: "row",
+    display: "flex",
+    top: 6,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    flex: 1,
   },
 });
