@@ -141,6 +141,15 @@ const Shop = () => {
         }}
       />
       <Stack.Screen
+        name="Largeview2"
+        component={Largeview}
+        options={{
+          headerShown: false,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+          presentation: 'transparentModal'
+        }}
+      />
+      <Stack.Screen
         name="myposts2"
         component={myPosts}
         options={{
@@ -173,6 +182,15 @@ const Meetup = () => {
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="Largeview3"
+        component={Largeview}
+        options={{
+          headerShown: false,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+          presentation: 'transparentModal'
         }}
       />
       <Stack.Screen
@@ -211,6 +229,15 @@ const Worker = () => {
         }}
       />
       <Stack.Screen
+        name="Largeview4"
+        component={Largeview}
+        options={{
+          headerShown: false,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+          presentation: 'transparentModal'
+        }}
+      />
+      <Stack.Screen
         name="myposts4"
         component={myPosts}
         options={{
@@ -220,6 +247,50 @@ const Worker = () => {
       />
       <Stack.Screen
         name="contact4"
+        component={Contact}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+const Searching = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="search1"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+      }}
+    >
+      <Stack.Screen
+        name="search1"
+        component={Search}
+        options={{
+          headerShown: false,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="Largeview5"
+        component={Largeview}
+        options={{
+          headerShown: false,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+          presentation: 'transparentModal'
+        }}
+      />
+      <Stack.Screen
+        name="my store"
+        component={myPosts}
+        options={{
+          headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="contact5"
         component={Contact}
         options={{
           headerShown: true,
@@ -351,7 +422,7 @@ const AfterLogin = () => {
       />
       <Tab.Screen
         name="search"
-        component={Search}
+        component={Searching}
         options={{
           tabBarIcon: ({ focused }) => (
             <View>

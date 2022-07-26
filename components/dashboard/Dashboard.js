@@ -50,33 +50,45 @@ export default function Dashboard() {
 
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
+  const allposts = useSelector((state) => state.posts.post)
+
   useEffect(() => {
     setshow(true);
     Bringposts();
   }, []);
-  const Bringposts = async () => {
-    const posts = query(
-      collection(db, "users", userid, "posts"),
-      orderBy("timestamp", "desc")
-    );
-    const querySnapshot = await getDocs(posts);
-    setRefresh(false);
-    
-    const info = [];
-    querySnapshot.docs.map((doc) => {
-      //console.log(doc.id, " => ", doc.data());
 
-      info.push({ key: doc.id, ...doc.data() });
-    });
-    setPosts(info);
-    //console.log(Posts);
-    setshow(false);
-    //dispatch(fetchAllPosts(info))
+  const Bringposts = async() => {
+    setPosts(allposts)
     const businessName = await AsyncStorage.getItem("name");
     const profilepic = await AsyncStorage.getItem("image");
     setbname(businessName)
     setpic(profilepic)
-  };
+    setshow(false);
+  }
+
+  // const Bringposts = async () => {
+  //   const posts = query(
+  //     collection(db, "users", userid, "posts"),
+  //     orderBy("timestamp", "desc")
+  //   );
+  //   const querySnapshot = await getDocs(posts);
+  //   setRefresh(false);
+    
+  //   const info = [];
+  //   querySnapshot.docs.map((doc) => {
+  //     //console.log(doc.id, " => ", doc.data());
+
+  //     info.push({ key: doc.id, ...doc.data() });
+  //   });
+  //   setPosts(info);
+  //   //console.log(Posts);
+  //   setshow(false);
+  //   //dispatch(fetchAllPosts(info))
+  //   const businessName = await AsyncStorage.getItem("name");
+  //   const profilepic = await AsyncStorage.getItem("image");
+  //   setbname(businessName)
+  //   setpic(profilepic)
+  // };
 
 
   const onSubmit = (props) => {
@@ -95,6 +107,7 @@ export default function Dashboard() {
   }
 
   const RenderItem = ({ item }) => {
+    if (item.user === userid){
     return (
       <View key={item.key} style={styles.itemContainer}>
         <TouchableOpacity onPress={()=>onSubmit(item)}>
@@ -131,6 +144,9 @@ export default function Dashboard() {
         </View>
       </View>
     );
+  }else{
+    return
+  }
   };
 
   return (

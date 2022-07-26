@@ -63,9 +63,8 @@ const Shops = () => {
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-  //const Posts = useSelector((state) => state.posts.post)
+  const allposts = useSelector((state) => state.posts.post)
   //console.log("this is the state" + Posts)
-   
   
 
   useEffect(() => {
@@ -74,27 +73,12 @@ const Shops = () => {
     setstatusFilter();
   }, []);
 
-  const Bringposts = async () => {
-    const posts = query(
-      collectionGroup(db, "posts"),
-      orderBy("timestamp", "desc"), where("category", "==", "shops")
-    );
-    const querySnapshot = await getDocs(posts);
-    setRefresh(false);
-    
-    const info = [];
-    querySnapshot.docs.map((doc) => {
-      //console.log(doc.id, " => ", doc.data());
-
-      info.push({ key: doc.id, ...doc.data() });
-    });
-    setPosts(info);
+  const Bringposts = () => {
+    setPosts(allposts)
     setDatalist(Posts);
-    setshow(false);
-    //dispatch(fetchAllPosts(info))
-  };
+  }
 
-  //console.log("post", Posts)
+
   const navigation = useNavigation();
  
 
@@ -102,7 +86,7 @@ const Shops = () => {
     navigation.navigate("myposts1", props);
   };
   const largeview = (props) => {
-    navigation.navigate("Largeview", props);
+    navigation.navigate("Largeview2", props);
   };
 
   const setstatusFilter = (name) => {
@@ -113,11 +97,13 @@ const Shops = () => {
       setDatalist(Posts);
     }
     setname(name);
+    setshow(false);
   };
 
 
 
   const renderItem = ({ item }) => {
+    if (item.category === "shops"){
     return (
       <View key={item.key} style={styles.itemContainer}>
         <View style={styles.profile}>
@@ -169,11 +155,14 @@ const Shops = () => {
             },
           ]}
         >
-          <Text>{item.description}</Text>
+          <Text style={{fontWeight: "bold"}}>{item.description}</Text>
         </View>
         
       </View>
     );
+    }else{
+      return
+    }
   };
   const separator = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;
@@ -235,7 +224,7 @@ const Shops = () => {
         renderItem={renderItem}
         itemSeparatorComponent={separator}
         style={{ marginBottom: 110 }}
-        onRefresh={() => Bringposts()}
+        onRefresh={() =>Bringposts()}
         refreshing={refresh}
       />
       {contentVerticalOffset > CONTENT_OFFSET_THRESHOLD && (

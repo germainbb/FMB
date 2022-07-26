@@ -85,7 +85,7 @@ const Filter = () => {
       orderBy("timestamp", "desc")
     );
     const querySnapshot = await getDocs(posts);
-    setRefresh(false);
+    
 
     const info = [];
     querySnapshot.docs.map((doc) => {
@@ -95,8 +95,10 @@ const Filter = () => {
     });
     //setPosts(info);
     setDatalist(Posts);
-    setshow(false);
+    
     dispatch(fetchAllPosts(info))
+    setRefresh(false);
+    setshow(false);
   };
 
   //console.log("post", Posts)
@@ -242,7 +244,7 @@ const Filter = () => {
         keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
-        style={{ marginBottom: 110 }}
+        style={{ marginBottom: 100 }}
         onRefresh={() => Bringposts()}
         refreshing={refresh}
       />

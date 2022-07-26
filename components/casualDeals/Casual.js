@@ -63,7 +63,7 @@ const Casual = () => {
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-  //const Posts = useSelector((state) => state.posts.post)
+  const allposts = useSelector((state) => state.posts.post)
   //console.log("this is the state" + Posts)
 
   useEffect(() => {
@@ -72,27 +72,14 @@ const Casual = () => {
     setstatusFilter();
   }, []);
 
-  const Bringposts = async () => {
-    const posts = query(
-      collectionGroup(db,"posts"),
-      orderBy("timestamp", "desc"),where("category", "==", "meetups")
-    );
-    const querySnapshot = await getDocs(posts);
-    setRefresh(false);
-    
-    const info = [];
-    querySnapshot.docs.map((doc) => {
-      //console.log(doc.id, " => ", doc.data());
-
-      info.push({ key: doc.id, ...doc.data() });
-    });
-    setPosts(info);
+  const Bringposts = () => {
+    setshow(true);
+    setPosts(allposts)
     setDatalist(Posts);
-    setshow(false);
-    //dispatch(fetchAllPosts(info))
-  };
+    
+  }
 
-  //console.log("post", Posts)
+
   const navigation = useNavigation();
  
 
@@ -100,7 +87,7 @@ const Casual = () => {
     navigation.navigate("myposts1", props);
   };
   const largeview = (props) => {
-    navigation.navigate("Largeview", props);
+    navigation.navigate("Largeview3", props);
   };
 
   const setstatusFilter = (name) => {
@@ -111,9 +98,11 @@ const Casual = () => {
       setDatalist(Posts);
     }
     setname(name);
+    setshow(false);
   };
 
   const renderItem = ({ item }) => {
+    if (item.category === "meetups"){
     return (
       <View key={item.key} style={styles.itemContainer}>
         <View style={styles.profile}>
@@ -170,6 +159,9 @@ const Casual = () => {
         
       </View>
     );
+  }else{
+    return
+  }
   };
   const separator = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;

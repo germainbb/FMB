@@ -43,8 +43,11 @@ import {
 } from "firebase/auth";
 import { auth } from "./components/dashboard/firebase";
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "./components/dashboard/firebase";
+import Advertize from "./components/dashboard/Advertize";
+import Feedback from "./components/dashboard/Feedback";
+import Help from "./components/dashboard/Help";
 import Authnavigation from "./components/login/Authnavigation";
+import CustomDrawer from "./components/dashboard/CustomDrawer";
 
 
 const Stack = createNativeStackNavigator();
@@ -53,10 +56,13 @@ const { width, height } = Dimensions.get("window");
 
 const Drawer = createDrawerNavigator();
 
-function MyDrawer() {
+function MyDrawer(props) {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator initialRouteName="Find My Business" drawerContent={(props)=><CustomDrawer{...props}/>}>
       <Drawer.Screen name="Find My Business" component={Home} />
+      <Drawer.Screen name="Help" component={Help} />
+      <Drawer.Screen name="Feedback" component={Feedback} />
+      <Drawer.Screen name="Advertize" component={Advertize} />
     </Drawer.Navigator>
   );
 }

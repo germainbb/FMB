@@ -167,7 +167,7 @@ export default function Contact(props) {
             {details.timestamp.toDate().toLocaleString("en")}
           </Text>
         )}
-        <Text style={styles.input}>shop image</Text>
+        <Text style={styles.input}>user/shop image</Text>
         {details !== undefined && (
           <Image
             resizeMode="contain"
