@@ -3,7 +3,7 @@ import React, {
   useLayoutEffect,
   useEffect,
   RefreshControl,
-  useRef
+  useRef,
 } from "react";
 import {
   StyleSheet,
@@ -46,6 +46,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { listTab } from "./Names";
+import Loader from "../dashboard/Loader";
 
 const { width, height } = Dimensions.get("window");
 
@@ -81,7 +82,7 @@ const MyPosts = (props) => {
     setstatusFilter();
   }, []);
 
-  const seller = props.route.params.user
+  const seller = props.route.params.user;
   const Bringposts = async () => {
     const posts = query(
       collection(db, "users", seller, "posts"),
@@ -122,8 +123,6 @@ const MyPosts = (props) => {
     setname(name);
   };
 
-  
-
   const renderItem = ({ item }) => {
     return (
       <View key={item.key} style={styles.itemContainer}>
@@ -152,18 +151,23 @@ const MyPosts = (props) => {
           onPress={() => largeview(item)}
           style={styles.itemLogo}
         >
-          <Image
-            resizeMode="contain"
-            style={styles.itemImage}
-            source={{
-              uri: item.profileImage,
-            }}
-          />
+          {item.profileImage != null ? (
+            <Loader
+              defaultImageSource={require("../../assets/download2.jpg")}
+              source={{ uri: item.profileImage }}
+              style={styles.itemImage}
+              resizeMode="contain"
+            />
+          ) : (
+            <Text>No image!</Text>
+          )}
         </TouchableOpacity>
         <View style={styles.itemBody}>
-          <Text style={styles.itemName}>K{item.price}</Text>
-          
+          <Text style={styles.itemName}>K {item.price}</Text>
         </View>
+        <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
         <View
           style={[
             styles.itemStatus,
@@ -172,8 +176,10 @@ const MyPosts = (props) => {
             },
           ]}
         >
-        <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={{ fontWeight: "bold"}}>{item.description}</Text>
+          
+          <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+            {item.description}
+          </Text>
         </View>
       </View>
     );
@@ -181,9 +187,6 @@ const MyPosts = (props) => {
   const separator = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;
   };
-
-
-  
 
   return (
     <View style={{ margin: 5 }}>
@@ -210,7 +213,7 @@ const MyPosts = (props) => {
 
       <FlatList
         ref={listRef}
-        onScroll={event => {
+        onScroll={(event) => {
           setContentVerticalOffset(event.nativeEvent.contentOffset.y);
         }}
         ListHeaderComponent={<Carousel />}
@@ -224,17 +227,15 @@ const MyPosts = (props) => {
         refreshing={refresh}
       />
       {contentVerticalOffset > CONTENT_OFFSET_THRESHOLD && (
-        
-          <Feather
-            name="arrow-up-circle"
-            size={60}
-            color="orange"
-            style={styles.scrollTopButton}
-            onPress={()=>
-            {listRef.current.scrollToOffset({ offset: 0,  animated: true});
-            }
-          }
-          />
+        <Feather
+          name="arrow-up-circle"
+          size={60}
+          color="orange"
+          style={styles.scrollTopButton}
+          onPress={() => {
+            listRef.current.scrollToOffset({ offset: 0, animated: true });
+          }}
+        />
       )}
       {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
     </View>

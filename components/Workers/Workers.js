@@ -43,7 +43,7 @@ import {
   arrayUnion,
   deleteDoc,
 } from "firebase/firestore";
-import { listTab } from "../dashboard/Names";
+import { listTab } from "../dashboard/Save";
 
 
 const { width, height } = Dimensions.get("window");
@@ -83,7 +83,7 @@ const Worker = () => {
   const navigation = useNavigation();
 
   const personalScreen = (props) => {
-    navigation.navigate("myposts1", props);
+    navigation.navigate("myposts4", props);
   };
   const largeview = (props) => {
     navigation.navigate("Largeview4", props);
@@ -198,7 +198,7 @@ const Worker = () => {
         }}
         ListHeaderComponent={<Carousel />}
         numColumns={2}
-        data={Posts}
+        data={datalist}
         keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}

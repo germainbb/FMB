@@ -14,6 +14,10 @@ import Casual from "../casualDeals/Casual";
 import Shops from "../shops/Shops";
 import Dashboard from "../dashboard/Dashboard";
 import myPosts from "../dashboard/MyPosts";
+import Stock from "../dashboard/Stock";
+import SearchStock from "../dashboard/SearchStock";
+import Shelf from "../dashboard/Shelf";
+import Stocks from "../dashboard/Stocks";
 import Search from "../search/Search";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
@@ -23,6 +27,10 @@ import Add from "../dashboard/Add";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Edit from "../dashboard/Edit";
 import Largeview from "../dashboard/Largeview";
+import Largeview2 from "../dashboard/Largeview2";
+import Largeview3 from "../dashboard/Largeview3";
+import Largeview4 from "../dashboard/Largeview4";
+import Largeview5 from "../dashboard/Largeview5";
 import Delete from "../dashboard/Delete";
 import Contact from "../dashboard/Contact";
 import Workers from "../Workers/Workers";
@@ -142,7 +150,7 @@ const Shop = () => {
       />
       <Stack.Screen
         name="Largeview2"
-        component={Largeview}
+        component={Largeview2}
         options={{
           headerShown: false,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -151,7 +159,7 @@ const Shop = () => {
       />
       <Stack.Screen
         name="myposts2"
-        component={myPosts}
+        component={Stocks}
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -186,7 +194,7 @@ const Meetup = () => {
       />
       <Stack.Screen
         name="Largeview3"
-        component={Largeview}
+        component={Largeview3}
         options={{
           headerShown: false,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -195,7 +203,7 @@ const Meetup = () => {
       />
       <Stack.Screen
         name="myposts3"
-        component={myPosts}
+        component={Shelf}
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -230,7 +238,7 @@ const Worker = () => {
       />
       <Stack.Screen
         name="Largeview4"
-        component={Largeview}
+        component={Largeview4}
         options={{
           headerShown: false,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -239,7 +247,7 @@ const Worker = () => {
       />
       <Stack.Screen
         name="myposts4"
-        component={myPosts}
+        component={Stock}
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -274,7 +282,7 @@ const Searching = () => {
       />
       <Stack.Screen
         name="Largeview5"
-        component={Largeview}
+        component={Largeview5}
         options={{
           headerShown: false,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
@@ -283,7 +291,7 @@ const Searching = () => {
       />
       <Stack.Screen
         name="my store"
-        component={myPosts}
+        component={SearchStock}
         options={{
           headerShown: true,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },

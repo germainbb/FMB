@@ -1,9 +1,22 @@
-import React, { useState, useRef, useEffect} from "react";
-import { StyleSheet, TextInput, View, Keyboard, Button, Dimensions, FlatList, ActivityIndicator, Image, Text, TouchableOpacity} from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Keyboard,
+  Button,
+  Dimensions,
+  FlatList,
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { Feather, Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
+import Loader from "../dashboard/Loader";
 
 const { width, height } = Dimensions.get("window");
 
@@ -15,7 +28,7 @@ const SearchBar = () => {
   const [datalist, setDatalist] = useState();
   const CONTENT_OFFSET_THRESHOLD = 300;
 
-  const allposts = useSelector((state) => state.posts.post)
+  const allposts = useSelector((state) => state.posts.post);
 
   useEffect(() => {
     Bringposts();
@@ -23,10 +36,9 @@ const SearchBar = () => {
 
   const Bringposts = () => {
     setDatalist(allposts);
-  }
+  };
   const listRef = useRef(null);
   const navigation = useNavigation();
-  
 
   const personalScreen = (props) => {
     navigation.navigate("my store", props);
@@ -68,13 +80,16 @@ const SearchBar = () => {
             onPress={() => largeview(item)}
             style={styles.itemLogo}
           >
-            <Image
-              resizeMode="contain"
-              style={styles.itemImage}
-              source={{
-                uri: item.profileImage,
-              }}
-            />
+            {item.profileImage != null ? (
+              <Loader
+                defaultImageSource={require("../../assets/download2.jpg")}
+                source={{ uri: item.profileImage }}
+                style={styles.itemImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>No image!</Text>
+            )}
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K {item.price}</Text>
@@ -84,7 +99,9 @@ const SearchBar = () => {
               <Text>stock</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.itemName}>{item.name}</Text>
+          <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
           <View
             style={[
               styles.itemStatus,
@@ -94,7 +111,9 @@ const SearchBar = () => {
               },
             ]}
           >
-            <Text style={{fontWeight: "bold"}}>{item.description}</Text>
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+              {item.description}
+            </Text>
           </View>
         </View>
       );
@@ -132,13 +151,16 @@ const SearchBar = () => {
             onPress={() => largeview(item)}
             style={styles.itemLogo}
           >
-            <Image
-              resizeMode="contain"
-              style={styles.itemImage}
-              source={{
-                uri: item.profileImage,
-              }}
-            />
+            {item.profileImage != null ? (
+              <Loader
+                defaultImageSource={require("../../assets/download2.jpg")}
+                source={{ uri: item.profileImage }}
+                style={styles.itemImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>No image!</Text>
+            )}
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K{item.price}</Text>
@@ -148,7 +170,9 @@ const SearchBar = () => {
               <Text>stock</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.itemName}>{item.name}</Text>
+          <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
           <View
             style={[
               styles.itemStatus,
@@ -158,7 +182,9 @@ const SearchBar = () => {
               },
             ]}
           >
-            <Text style={{fontWeight: "bold"}}>{item.description}</Text>
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+              {item.description}
+            </Text>
           </View>
         </View>
       );
@@ -195,13 +221,16 @@ const SearchBar = () => {
             onPress={() => largeview(item)}
             style={styles.itemLogo}
           >
-            <Image
-              resizeMode="contain"
-              style={styles.itemImage}
-              source={{
-                uri: item.profileImage,
-              }}
-            />
+            {item.profileImage != null ? (
+              <Loader
+                defaultImageSource={require("../../assets/download2.jpg")}
+                source={{ uri: item.profileImage }}
+                style={styles.itemImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>No image!</Text>
+            )}
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K {item.price}</Text>
@@ -211,7 +240,9 @@ const SearchBar = () => {
               <Text>stock</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.itemName}>{item.name}</Text>
+          <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
           <View
             style={[
               styles.itemStatus,
@@ -221,78 +252,91 @@ const SearchBar = () => {
               },
             ]}
           >
-            <Text style={{fontWeight: "bold"}}>{item.description}</Text>
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+              {item.description}
+            </Text>
           </View>
         </View>
       );
     }
     if (
-      item.price.replace(/\s|,/g, "")
+      item.price
+        .replace(/\s|,/g, "")
         .includes(searchPhrase.trim().replace(/\s|,/g, ""))
     ) {
-      return(
+      return (
         <View key={item.key} style={styles.itemContainer}>
-        <View style={styles.profile}>
-          <Image
-            style={styles.profileImage}
-            source={{
-              uri: item.profilepic,
-            }}
-          />
-          <Text
-            numberOfLines={2}
-            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+          <View style={styles.profile}>
+            <Image
+              style={styles.profileImage}
+              source={{
+                uri: item.profilepic,
+              }}
+            />
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.businessname}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.timestamp.toDate().toLocaleString("en")}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => largeview(item)}
+            style={styles.itemLogo}
           >
-            {item.businessname}
-          </Text>
-          <Text
-            numberOfLines={2}
-            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
-          >
-            {item.timestamp.toDate().toLocaleString("en")}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => largeview(item)}
-          style={styles.itemLogo}
-        >
-          <Image
-            resizeMode="contain"
-            style={styles.itemImage}
-            source={{
-              uri: item.profileImage,
-            }}
-          />
-        </TouchableOpacity>
-        <View style={styles.itemBody}>
-          <Text style={styles.itemName}>K {item.price}</Text>
-          <TouchableOpacity onPress={() => personalScreen(item)}>
-            <MaterialIcons name="store" size={24} color="green" />
-
-            <Text>stock</Text>
+            {item.profileImage != null ? (
+              <Loader
+                defaultImageSource={require("../../assets/download2.jpg")}
+                source={{ uri: item.profileImage }}
+                style={styles.itemImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>No image!</Text>
+            )}
           </TouchableOpacity>
+          <View style={styles.itemBody}>
+            <Text style={styles.itemName}>K {item.price}</Text>
+            <TouchableOpacity onPress={() => personalScreen(item)}>
+              <MaterialIcons name="store" size={24} color="green" />
+
+              <Text>stock</Text>
+            </TouchableOpacity>
+          </View>
+          <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
+          <View
+            style={[
+              styles.itemStatus,
+              {
+                backgroundColor:
+                  item.status === "purple" ? "purple" : "#69c080",
+              },
+            ]}
+          >
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+              {item.description}
+            </Text>
+          </View>
         </View>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <View
-          style={[
-            styles.itemStatus,
-            {
-              backgroundColor:
-                item.status === "purple" ? "purple" : "#69c080",
-            },
-          ]}
-        >
-          <Text style={{fontWeight: "bold"}}>{item.description}</Text>
-        </View>
-      </View>
-    )}
+      );
+    }
   };
   // rendering the item
 
   return (
-    <View  onStartShouldSetResponder={() => {
-      setClicked(false);
-    }}>
+    <View
+      onStartShouldSetResponder={() => {
+        setClicked(false);
+      }}
+    >
       <View style={styles.container}>
         <View
           style={
@@ -367,7 +411,6 @@ const SearchBar = () => {
           }}
         />
       )}
-      
     </View>
   );
 };
@@ -407,7 +450,7 @@ const styles = StyleSheet.create({
   //FROM SHOPS
   scrollTopButton: {
     position: "absolute",
-    bottom: 130,
+    bottom: 170,
     right: 10,
   },
   itemContainer: {
@@ -530,5 +573,4 @@ const styles = StyleSheet.create({
     elevation: 2,
     flex: 1,
   },
-
 });

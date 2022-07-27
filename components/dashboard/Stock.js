@@ -23,15 +23,14 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import Carousel from "../dashboard/Carousel";
-import Loader from "../dashboard/Loader";
-import Largeview from "../dashboard/Largeview";
+import Carousel from "./Carousel";
+import Largeview from "./Largeview";
 //import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchAllPosts } from "../../reduxTK/reducers/PostsSlice";
-import { auth, db } from "../../components/dashboard/firebase";
+import { auth, db } from "./firebase";
 import { onSnapshot } from "firebase/firestore";
 import {
   orderBy,
@@ -46,107 +45,79 @@ import {
   arrayUnion,
   deleteDoc,
 } from "firebase/firestore";
-import { listTab } from "../dashboard/Names";
-import basketball from "../../assets/Basketball.gif";
-import bb from "../../assets/bb.png";
+import { listTab } from "./Names";
+import Loader from "../dashboard/Loader";
 
 const { width, height } = Dimensions.get("window");
 
-const Filter = () => {
+
+const MyPosts = (props) => {
   const [name, setname] = useState("all");
   const [datalist, setDatalist] = useState();
   const [modalvisible, setModalvisible] = useState(false);
   const [mobile_no, setmobile_no] = useState("0776778798");
-  //const [Posts, setPosts] = useState([]);
+  const [Posts, setPosts] = useState([]);
   const [show, setshow] = useState(false);
   const [refresh, setRefresh] = useState(false);
-  const [arrow, setarrow] = useState(false);
   const [contentVerticalOffset, setContentVerticalOffset] = useState(0);
   const CONTENT_OFFSET_THRESHOLD = 300;
 
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-  const Posts = useSelector((state) => state.posts.post);
-  //console.log("this is the state" + Posts)
+  const allposts = useSelector((state) => state.posts.post);
 
   useEffect(() => {
     setshow(true);
     Bringposts();
-    setname("all");
-    setstatusFilter();
   }, []);
 
-  const Bringposts = async () => {
-    const posts = query(
-      collectionGroup(db, "posts"),
-      orderBy("timestamp", "desc")
-    );
-    const querySnapshot = await getDocs(posts);
+  const seller = props.route.params.user;
 
-    const info = [];
-    querySnapshot.docs.map((doc) => {
-      //console.log(doc.id, " => ", doc.data());
-
-      info.push({ key: doc.id, ...doc.data() });
-    });
-    //setPosts(info);
+  const Bringposts = () => {
+    setPosts(allposts);
     setDatalist(Posts);
-
-    dispatch(fetchAllPosts(info));
-    setRefresh(false);
     setshow(false);
   };
 
-  //console.log("post", Posts)
+  
   const navigation = useNavigation();
 
-  const personalScreen = (props) => {
-    navigation.navigate("myposts1", props);
-  };
+  
   const largeview = (props) => {
-    navigation.navigate("Largeview", props);
-  };
-
-  const setstatusFilter = (name) => {
-    if (name !== "all") {
-      //purple and green
-      setDatalist([...Posts.filter((e) => e.name === name)]);
-    } else {
-      setDatalist(Posts);
-    }
-    setname(name);
+    navigation.navigate("Largeview4", props);
   };
 
   const renderItem = ({ item }) => {
-    return (
-      <View key={item.key} style={styles.itemContainer}>
-        <View style={styles.profile}>
-          <Image
-            defaultSource={basketball}
-            style={styles.profileImage}
-            source={{
-              uri: item.profilepic,
-            }}
-          />
-          <Text
-            numberOfLines={2}
-            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+    if (item.user === seller) {
+      return (
+        <View key={item.key} style={styles.itemContainer}>
+          <View style={styles.profile}>
+            <Image
+              //defaultSource={basketball}
+              style={styles.profileImage}
+              source={{
+                uri: item.profilepic,
+              }}
+            />
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.businessname}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.timestamp.toDate().toLocaleString("en")}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => largeview(item)}
+            style={styles.itemLogo}
           >
-            {item.businessname}
-          </Text>
-          <Text
-            numberOfLines={2}
-            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
-          >
-            {item.timestamp.toDate().toLocaleString("en")}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => largeview(item)}
-          style={styles.itemLogo}
-        >
-          {item.profileImage != null ? (
+            {item.profileImage != null ? (
             <Loader
               defaultImageSource={require("../../assets/download2.jpg")}
               source={{ uri: item.profileImage }}
@@ -156,81 +127,34 @@ const Filter = () => {
           ) : (
             <Text>No image!</Text>
           )}
-        </TouchableOpacity>
-        <View style={styles.itemBody}>
-          <Text style={styles.itemName}>K{item.price}</Text>
-
-          <TouchableOpacity onPress={() => personalScreen(item)}>
-            <MaterialIcons name="store" size={24} color="green" />
-
-            <Text>stock</Text>
           </TouchableOpacity>
+          <View style={styles.itemBody}>
+            <Text style={styles.itemName}>K {item.price}</Text>
+          </View>
+          <Text numberOfLines={1} style={styles.itemName}>{item.name}</Text>
+          <View
+            style={[
+              styles.itemStatus,
+              {
+                backgroundColor: item.name === "purple" ? "purple" : "#69c080",
+              },
+            ]}
+          >
+            
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>{item.description}</Text>
+          </View>
         </View>
-        <Text numberOfLines={1} style={styles.itemName}>
-          {item.name}
-        </Text>
-        <View
-          style={[
-            styles.itemStatus,
-            {
-              backgroundColor: item.name === "purple" ? "purple" : "#69c080",
-            },
-          ]}
-        >
-          <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
-            {item.description}
-          </Text>
-        </View>
-      </View>
-    );
+      );
+    } else {
+      return;
+    }
   };
   const separator = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to EXIT?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, []);
-
   return (
     <View style={{ margin: 5 }}>
-      <ScrollView horizontal>
-        <View style={styles.listTab}>
-          {listTab.map((e) => (
-            <TouchableOpacity
-              key={e.name}
-              style={[styles.btnTab, name === e.name && styles.btnTabActive]}
-              onPress={() => setstatusFilter(e.name)}
-            >
-              <Text
-                style={[
-                  styles.textTab,
-                  name === e.name && styles.textTabActive,
-                ]}
-              >
-                {e.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
 
       <FlatList
         ref={listRef}
@@ -243,7 +167,7 @@ const Filter = () => {
         keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
-        style={{ marginBottom: 100 }}
+        style={{ marginBottom: 110 }}
         onRefresh={() => Bringposts()}
         refreshing={refresh}
       />
@@ -263,12 +187,12 @@ const Filter = () => {
   );
 };
 
-export default Filter;
+export default MyPosts;
 
 const styles = StyleSheet.create({
   scrollTopButton: {
     position: "absolute",
-    bottom: 160,
+    bottom: 130,
     right: 10,
   },
   listTab: {

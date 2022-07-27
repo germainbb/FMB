@@ -22,5 +22,5 @@
   "reactSnippets.settings.prettierEnabled": true,
   "path-intellisense.autoSlashAfterDirectory": true,
   "path-intellisense.autoTriggerNextSuggestion": true,
-  "editor.formatOnSave": true
+  "editor.formatOnSave": false
 }

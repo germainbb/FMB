@@ -1,116 +1,60 @@
-import {
-  StyleSheet,
-  Text,
-  Alert,
-  View,
-  Image,
-  Button,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
-import { db, storage } from "../../components/dashboard/firebase";
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
-
-const Save = (props, { navigation }) => {
-  const [progress, setProgress] = useState(0);
-  const [caption, setCaption] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const uploadPost = async () => {
-    if (loading) return;
-
-    setLoading(true);
-
-    const uri = props.route.params.image;
-
-    const blob = await new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.onload = function () {
-        resolve(xhr.response);
-      };
-      xhr.onerror = function (e) {
-        console.log(e);
-        reject(new TypeError("Network request failed"));
-      };
-      xhr.responseType = "blob";
-      xhr.open("GET", uri, true);
-      xhr.send(null);
-    });
-
-    const docRef = await addDoc(collection(db, "posts"), {
-      profileImage: props.route.params.image,
-      caption: caption,
-      timestamp: serverTimestamp(),
-    })
-      .then(() => console.log("this is the docRef"))
-      .catch(() => {
-        console.log("rejected");
-      });
-    const imageRef = ref(storage, `images/${caption}`);
-    const metadata = {
-      contentType: "image/jpg",
-    };
-
-    const UploadTask = await uploadBytesResumable(
-      imageRef,
-      blob,
-      metadata
-    ).then(
-      () => Alert.alert(" image uploaded successfully!!"),
-      () => Alert.alert("Oops", "try again germain")
-    );
-    UploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const prog = Math.round(
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        );
-        setProgress(prog);
-      },
-      (err) => {
-        Alert.alert(err + "not working");
-      },
-      async () => {
-        Alert.alert("Oops", "try again germain");
-        const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(db, "posts", docRef.id), {
-          imageUrl: downloadURL,
-        });
-        blob.close();
-      }
-    );
-
-    navigation.navigate("home");
-  };
-
-  return (
-    <View>
-      <Image
-        source={{ uri: props.route.params.image }}
-        style={{ width: "100%", height: 300 }}
-      />
-      <TextInput
-        placeholder="write a description . . ."
-        onChangeText={(caption) => setCaption(caption)}
-      />
-      <TouchableOpacity onPress={() => setCaption("")}>
-        <Button title="post" onPress={() => uploadPost()} />
-      </TouchableOpacity>
-      <Text>uploaded {progress}</Text>
-    </View>
-  );
-};
-
-export default Save;
-
-const styles = StyleSheet.create({});
+export const listTab = [
+  { name: "all" },
+  { name: "nurse" },
+  { name: "driver" },
+  { name: "builder" },
+  { name: "architect" },
+  { name: "engineer" },
+  { name: "electrician" },
+  { name: "mechanic" },
+  { name: "pharmacists" },
+  { name: "assistant" },
+  { name: "decorator" },
+  { name: "designer" },
+  { name: "tailor" },
+  { name: "seamstress" },
+  { name: "teacher" },
+  { name: "vendor" },
+  { name: "deliverer" },
+  { name: "sender" },
+  { name: "technician" },
+  { name: "mc" },
+  { name: "speaker" },
+  { name: "conductor" },
+  { name: "tutor" },
+  { name: "coach" },
+  { name: "vet" },
+  { name: "doctor" },
+  { name: "cleaner" },
+  { name: "janitor" },
+  { name: "cobbler" },
+  { name: "hairdresser" },
+  { name: "taxi driver" },
+  { name: "officer" },
+  { name: "receptionist" },
+  { name: "construction worker" },
+  { name: "maid" },
+  { name: "bodyguard" },
+  { name: "supplier" },
+  { name: "dress" },
+  { name: "carpenter" },
+  { name: "event planner" },
+  { name: "clinical officer" },
+  { name: "hr officer" },
+  { name: "cook" },
+  { name: "chef" },
+  { name: "musician" },
+  { name: "producer" },
+  { name: "shop keeper" },
+  { name: "attendant" },
+  { name: "farmer" },
+  { name: "salesperson" },
+  { name: "roommate" },
+  { name: "caretaker" },
+  { name: "guard" },
+  { name: "truck driver" },
+  { name: "manager" },
+  { name: "agent" },
+  { name: "consultant" },
+  { name: "lecturer" },
+];

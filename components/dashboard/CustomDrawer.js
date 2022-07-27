@@ -1,82 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   ImageBackground,
   Image,
   TouchableOpacity,
-} from 'react-native';
+} from "react-native";
 import {
   DrawerContentScrollView,
   DrawerItemList,
-} from '@react-navigation/drawer';
+} from "@react-navigation/drawer";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { useSelector, useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+const CustomDrawer = (props) => {
+  const [bname, setbname] = useState();
+  const [pic, setpic] = useState();
 
-const CustomDrawer = props => {
+  const userid = useSelector((state) => state.user.currentUser);
+  useEffect(() => {
+    Bringposts();
+  }, []);
+
+  const Bringposts = async () => {
+    const businessName = await AsyncStorage.getItem("name");
+    const profilepic = await AsyncStorage.getItem("image");
+    setbname(businessName);
+    setpic(profilepic);
+  };
+
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <DrawerContentScrollView
         {...props}
-        contentContainerStyle={{backgroundColor: 'orange'}}>
+        contentContainerStyle={{ backgroundColor: "orange" }}
+      >
         <ImageBackground
-          source={require('../../assets/money.jpg')}
-          style={{padding: 20}}>
+          blurRadius={2}
+          source={require("../../assets/money.jpg")}
+          style={{ padding: 20 }}
+        >
           <Image
-          resizeMode='cover'
-            source={require('../../assets/fmb3.png')}
-            style={{height: 100, width: 100, borderRadius: 80, marginBottom: 10}}
+            resizeMode="cover"
+            source={{ uri: pic }}
+            style={{
+              height: 100,
+              width: 100,
+              borderRadius: 80,
+              marginBottom: 10,
+            }}
           />
           <Text
             style={{
-              color: '#fff',
+              color: "#fff",
               fontSize: 18,
-              
+
               marginBottom: 5,
-            }}>
-            John Doe
+            }}
+          >
+            {userid}
           </Text>
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: "row" }}>
             <Text
               style={{
-                color: '#fff',
-                
+                color: "#fff",
+
                 marginRight: 5,
-              }}>
-              280 Coins
+              }}
+            >
+              {bname}
             </Text>
-            <FontAwesome5 name="coins" size={14} color="#fff" />
           </View>
         </ImageBackground>
-        <View style={{flex: 1, backgroundColor: '#fff', paddingTop: 10}}>
+        <View style={{ flex: 1, backgroundColor: "#fff", paddingTop: 10 }}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
-      <View style={{padding: 20, borderTopWidth: 1, borderTopColor: '#ccc'}}>
-        <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="share-social-outline" size={22} />
+      <View style={{ padding: 20, borderTopWidth: 1, borderTopColor: "#ccc" }}>
+        <TouchableOpacity onPress={() => {}} style={{ paddingVertical: 15 }}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {/* <Ionicons name="share-social-outline" size={22} /> */}
+            <MaterialCommunityIcons
+              name="lightbulb-on-outline"
+              size={30}
+              color="orange"
+            />
             <Text
               style={{
                 fontSize: 15,
-                
-                marginLeft: 5,
-              }}>
-              Tell a Friend
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {}} style={{paddingVertical: 15}}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Ionicons name="exit-outline" size={22} />
-            <Text
-              style={{
-                fontSize: 15,
-                
-                marginLeft: 5,
-              }}>
-              Sign Out
+                marginRight: 5,
+                marginLeft: 4,
+              }}
+            >
+              Pull Down to Refresh If The Page Is Blank
             </Text>
           </View>
         </TouchableOpacity>

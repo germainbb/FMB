@@ -2,7 +2,8 @@ import React, {
   useState,
   useLayoutEffect,
   useEffect,
-  RefreshControl,useRef
+  RefreshControl,
+  useRef,
 } from "react";
 import {
   StyleSheet,
@@ -44,9 +45,9 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { listTab } from "../dashboard/Names";
+import Loader from "../dashboard/Loader";
 
 const { width, height } = Dimensions.get("window");
-
 
 const Shops = () => {
   const [name, setname] = useState("all");
@@ -63,9 +64,8 @@ const Shops = () => {
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-  const allposts = useSelector((state) => state.posts.post)
+  const allposts = useSelector((state) => state.posts.post);
   //console.log("this is the state" + Posts)
-  
 
   useEffect(() => {
     setshow(true);
@@ -74,16 +74,14 @@ const Shops = () => {
   }, []);
 
   const Bringposts = () => {
-    setPosts(allposts)
+    setPosts(allposts);
     setDatalist(Posts);
-  }
-
+  };
 
   const navigation = useNavigation();
- 
 
   const personalScreen = (props) => {
-    navigation.navigate("myposts1", props);
+    navigation.navigate("myposts2", props);
   };
   const largeview = (props) => {
     navigation.navigate("Largeview2", props);
@@ -100,68 +98,73 @@ const Shops = () => {
     setshow(false);
   };
 
-
-
   const renderItem = ({ item }) => {
-    if (item.category === "shops"){
-    return (
-      <View key={item.key} style={styles.itemContainer}>
-        <View style={styles.profile}>
-          <Image
-            style={styles.profileImage}
-            source={{
-              uri: item.profilepic,
-            }}
-          />
-          <Text
-            numberOfLines={2}
-            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+    if (item.category === "shops") {
+      return (
+        <View key={item.key} style={styles.itemContainer}>
+          <View style={styles.profile}>
+            <Image
+              style={styles.profileImage}
+              source={{
+                uri: item.profilepic,
+              }}
+            />
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.businessname}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.timestamp.toDate().toLocaleString("en")}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => largeview(item)}
+            style={styles.itemLogo}
           >
-            {item.businessname}
-          </Text>
-          <Text
-            numberOfLines={2}
-            style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
-          >
-            {item.timestamp.toDate().toLocaleString("en")}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => largeview(item)}
-          style={styles.itemLogo}
-        >
-          <Image
-            resizeMode="contain"
-            style={styles.itemImage}
-            source={{
-              uri: item.profileImage,
-            }}
-          />
-        </TouchableOpacity>
-        <View style={styles.itemBody}>
-          <Text style={styles.itemName}>K{item.price}</Text>
-          <TouchableOpacity onPress={()=>personalScreen(item)}>
-            <MaterialIcons name="store" size={24} color="green" />
-
-            <Text>stock</Text>
+            {item.profileImage != null ? (
+              <Loader
+                defaultImageSource={require("../../assets/download2.jpg")}
+                source={{ uri: item.profileImage }}
+                style={styles.itemImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>No image!</Text>
+            )}
           </TouchableOpacity>
+          <View style={styles.itemBody}>
+            <Text style={styles.itemName}>K{item.price}</Text>
+            <TouchableOpacity onPress={() => personalScreen(item)}>
+              <MaterialIcons name="store" size={24} color="green" />
+
+              <Text>stock</Text>
+            </TouchableOpacity>
+          </View>
+          <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
+          <View
+            style={[
+              styles.itemStatus,
+              {
+                backgroundColor:
+                  item.status === "purple" ? "purple" : "#69c080",
+              },
+            ]}
+          >
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+              {item.description}
+            </Text>
+          </View>
         </View>
-        <Text style={styles.itemName}>{item.name}</Text>
-        <View
-          style={[
-            styles.itemStatus,
-            {
-              backgroundColor: item.status === "purple" ? "purple" : "#69c080",
-            },
-          ]}
-        >
-          <Text style={{fontWeight: "bold"}}>{item.description}</Text>
-        </View>
-        
-      </View>
-    );
-    }else{
-      return
+      );
+    } else {
+      return;
     }
   };
   const separator = () => {
@@ -214,7 +217,7 @@ const Shops = () => {
 
       <FlatList
         ref={listRef}
-        onScroll={event => {
+        onScroll={(event) => {
           setContentVerticalOffset(event.nativeEvent.contentOffset.y);
         }}
         ListHeaderComponent={<Carousel />}
@@ -223,23 +226,21 @@ const Shops = () => {
         keyExtractor={(item) => item.key.toString()}
         renderItem={renderItem}
         itemSeparatorComponent={separator}
-        style={{ marginBottom: 110 }}
-        onRefresh={() =>Bringposts()}
+        style={{ marginBottom: 120 }}
+        onRefresh={() => Bringposts()}
         refreshing={refresh}
       />
       {contentVerticalOffset > CONTENT_OFFSET_THRESHOLD && (
-        
         <Feather
           name="arrow-up-circle"
           size={60}
           color="orange"
           style={styles.scrollTopButton}
-          onPress={()=>
-          {listRef.current.scrollToOffset({ offset: 0,  animated: true});
-          }
-        }
+          onPress={() => {
+            listRef.current.scrollToOffset({ offset: 0, animated: true });
+          }}
         />
-    )}
+      )}
       {<ActivityIndicator size="large" color="#0000ff" animating={show} />}
     </View>
   );
@@ -250,7 +251,7 @@ export default Shops;
 const styles = StyleSheet.create({
   scrollTopButton: {
     position: "absolute",
-    bottom: 130,
+    bottom: 170,
     right: 10,
   },
   listTab: {
