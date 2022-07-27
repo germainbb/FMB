@@ -2,6 +2,7 @@ export const listTab = [
   { name: "all" },
   { name: "nurse" },
   { name: "driver" },
+  { name: "developer" },
   { name: "builder" },
   { name: "architect" },
   { name: "engineer" },
