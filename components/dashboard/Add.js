@@ -110,7 +110,7 @@ const Add = ({ navigation }, props) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [1, 1],
       quality: 1,
     });
 

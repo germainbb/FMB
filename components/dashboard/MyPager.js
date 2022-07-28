@@ -6,13 +6,7 @@ const MyPager = () => (
   <View style={styles.container}>
     <SwiperFlatList index={2} showPagination>
       <View style={[styles.child, { backgroundColor: "tomato" }]}>
-        <Image
-          resizeMode="contain"
-          style={styles.itemImage}
-          source={{
-            uri: "https://dks.scene7.com/is/image/GolfGalaxy/18NIKMNBLKRSLBRNYLAL?qlt=70&wid=600&fmt=pjpeg",
-          }}
-        />
+      <Text style={styles.text}>Advertize here K30/week or k100/month if you're offering promotions</Text>
       </View>
       <View style={[styles.child, { backgroundColor: "thistle" }]}>
         <Image

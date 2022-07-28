@@ -238,6 +238,7 @@ const Filter = () => {
           setContentVerticalOffset(event.nativeEvent.contentOffset.y);
         }}
         ListHeaderComponent={<Carousel />}
+        initialNumToRender={6} 
         numColumns={2}
         data={datalist}
         keyExtractor={(item) => item.key.toString()}

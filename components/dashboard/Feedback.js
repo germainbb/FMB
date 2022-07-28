@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 const Feedback = () => {
   return (
     <View style={{ padding: 10 }}>
-      <Text style={{ fontSize: 30, padding: 6, color: "green" }}>Feedback</Text>
+      <Text style={{ fontSize: 30, padding: 6, color: "green" }}>Feedback/Report</Text>
       <MaterialCommunityIcons
         onPress={() =>
           Linking.openURL("http://api.whatsapp.com/send?phone=260954792237")

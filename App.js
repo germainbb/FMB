@@ -21,7 +21,7 @@ import { NavigationContainer } from "@react-navigation/native";
 // import { MaterialIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "./components/home/Home";
-import Save from "./components/dashboard/Save";
+import TopBusinesses from "./components/dashboard/TopBusinesses";
 import MyPager from "./components/dashboard/MyPager";
 //import Search from './components/Search'
 import LoginScreen from "./components/login/LoginScreen";
@@ -63,6 +63,7 @@ function MyDrawer(props) {
       <Drawer.Screen name="Help" component={Help} />
       <Drawer.Screen name="Feedback" component={Feedback} />
       <Drawer.Screen name="Advertize" component={Advertize} />
+      <Drawer.Screen name="Most Liked Businesses" component={TopBusinesses} />
     </Drawer.Navigator>
   );
 }
