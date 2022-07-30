@@ -47,8 +47,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { listTab } from "../dashboard/Names";
-import basketball from "../../assets/Basketball.gif";
-import bb from "../../assets/bb.png";
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -123,7 +122,6 @@ const Filter = () => {
       <View key={item.key} style={styles.itemContainer}>
         <View style={styles.profile}>
           <Image
-            defaultSource={basketball}
             style={styles.profileImage}
             source={{
               uri: item.profilepic,
@@ -160,7 +158,7 @@ const Filter = () => {
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>K{item.price}</Text>
 
-          <TouchableOpacity onPress={() => personalScreen(item)}>
+          <TouchableOpacity onPress={() => personalScreen(item.user)}>
             <MaterialIcons name="store" size={24} color="green" />
 
             <Text>stock</Text>
@@ -247,6 +245,7 @@ const Filter = () => {
         style={{ marginBottom: 100 }}
         onRefresh={() => Bringposts()}
         refreshing={refresh}
+        ListFooterComponent={() => (<Text>Pull Down To Reload The Data</Text>)}
       />
       {contentVerticalOffset > CONTENT_OFFSET_THRESHOLD && (
         <Feather

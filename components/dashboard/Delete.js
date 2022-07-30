@@ -30,7 +30,7 @@ const Delete = (props) => {
   const onSubmit = async () => {
     await deleteDoc(doc(db, "users", userid, "posts", item.key)).then(
       Alert.alert("post deleted")
-    ).catch(Alert.alert("something went wrong"))
+    ).catch()
     
     // Create a reference to the file to delete
 const desertRef = ref(storage, '${userid}/${item.name}');
@@ -39,9 +39,8 @@ const desertRef = ref(storage, '${userid}/${item.name}');
 deleteObject(desertRef).then(() => {
   // File deleted successfully
   Alert.alert("post deleted")
-}).catch((error) => {
-  // Uh-oh, an error occurred!
-  Alert.alert("something went wrong")
+}).catch(()=>{
+  Alert.alert("Try again");
 });
 
     navigation.navigate("dashboard");

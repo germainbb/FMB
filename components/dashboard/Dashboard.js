@@ -24,7 +24,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get("window");
 
 export default function Dashboard() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [myposts, setmyposts] = useState([]);
   const [Posts, setPosts] = useState([]);
   const [show, setshow] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -37,6 +37,8 @@ export default function Dashboard() {
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const allposts = useSelector((state) => state.posts.post);
+
+
 
   useEffect(() => {
     setshow(true);
@@ -52,38 +54,37 @@ export default function Dashboard() {
     setshow(false);
   };
 
-  // const Bringposts = async () => {
-  //   const posts = query(
-  //     collection(db, "users", userid, "posts"),
-  //     orderBy("timestamp", "desc")
-  //   );
-  //   const querySnapshot = await getDocs(posts);
-  //   setRefresh(false);
-
-  //   const info = [];
-  //   querySnapshot.docs.map((doc) => {
-  //     //console.log(doc.id, " => ", doc.data());
-
-  //     info.push({ key: doc.id, ...doc.data() });
-  //   });
-  //   setPosts(info);
-  //   //console.log(Posts);
-  //   setshow(false);
-  //   //dispatch(fetchAllPosts(info))
-  //   const businessName = await AsyncStorage.getItem("name");
-  //   const profilepic = await AsyncStorage.getItem("image");
-  //   setbname(businessName)
-  //   setpic(profilepic)
-  // };
-
   const onSubmit = (props) => {
     navigation.navigate("Delete", props);
   };
 
   const navigation = useNavigation();
   const addScreen = () => {
+    console.log(Posts);
+    if(Posts.length === 0){
+      navigation.navigate("add");
+    }
+    var totalLength = 0;
+    Posts.map((post) => {
+      if (post.user === userid) {
+    //console.log({...post})
+    const info = []
+    info.push({...post})
+    setmyposts(info)
+    totalLength += myposts.length;
+    //console.log(totalLength)
+    
+    if (totalLength >= 20) {
+      navigation.navigate("enter passcode");
+    }else{
     navigation.navigate("add");
-  };
+    }
+    if(totalLength === 30){
+      Alert.alert("limit reached!")
+      navigation.goBack();
+    }
+    }}
+  , [myposts]);};
   const editScreen = () => {
     navigation.navigate("edit");
   };
@@ -93,6 +94,7 @@ export default function Dashboard() {
 
   const RenderItem = ({ item }) => {
     if (item.user === userid) {
+      
       return (
         <View key={item.key} style={styles.itemContainer}>
           <TouchableOpacity onPress={() => onSubmit(item)}>
@@ -181,13 +183,13 @@ export default function Dashboard() {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={editScreen}
+          onPress={()=>editScreen()}
           style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
         >
           <SimpleLineIcons name="pencil" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={addScreen}
+          onPress={()=>addScreen()}
           style={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
         >
           <Ionicons name="add-sharp" size={30} color="black" />

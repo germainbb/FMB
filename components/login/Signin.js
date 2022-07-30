@@ -24,34 +24,22 @@ const Signin = () => {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    // setTimeout(() => {
-    //   navigation.navigate("FMB sign up");
-    // }, 9000);
+   
     const handleSignIn = async () => {
       const emaill = await AsyncStorage.getItem("Email");
       const pass = await AsyncStorage.getItem("Password");
       if (emaill !== null && pass !== null) {
         signInWithEmailAndPassword(auth, emaill, pass)
           .then(async (userCredential) => {
-            //console.log("signed in");
             const user = userCredential.user;
             dispatch(setuser(user.email));
-            console.log(user.email);
             navigation.navigate("FMB");
-            // await addDoc(collection(db, "users"), {
-            //   email: emaill,
-            // })
-            //   .then(() => console.log("this is the email"))
-            //   .catch(() => {
-            //     console.log("rejected");
-            //   });
           })
           .catch((error) => {
             navigation.navigate("FMB sign up");
-            console.log(error);
           });
       } else {
-        console.log("no data");
+        //console.log("no data");
       }
     };
     handleSignIn();

@@ -50,13 +50,6 @@ import React, {
   
   const { width, height } = Dimensions.get("window");
   
-  // const listTab = [
-  //   { status: "all" },
-  //   { status: "purple" },
-  //   { status: "green" },
-  //   { status: "red" },
-  //   { status: "black" },
-  // ];
   
   const MyPosts = (props) => {
     const [name, setname] = useState("all");
@@ -83,7 +76,7 @@ import React, {
       setstatusFilter();
     }, []);
   
-    const seller = props.route.params.user
+    const seller = props.route.params
 
     const Bringposts = ()=>{
         setPosts(allposts);

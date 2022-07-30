@@ -39,23 +39,20 @@ const LoginScreen = () => {
   const handleCreateAccount =() => {
     createUserWithEmailAndPassword(auth, email, password)
       .then(async(userCredential) => {
-        console.log("account created");
+        // console.log("account created");
         const user = userCredential.user;
         setshow(true)
         dispatch(setuser(user.email))
-        console.log(user.email);
+        // console.log(user.email);
         await setDoc(doc(db, "users",user.email), {
           email: email,
         })
-          .then(() => console.log("this is the email"))
-          .catch(() => {
-            console.log("rejected");
-          });
+          .then(() => Alert.alert("account created successfully!"))
+          .catch(() => {});
         storeData(email, password);
         navigation.navigate("FMB");
       })
       .catch((error) => {
-        console.log(error);
         Alert.alert(error.message);
       });
   };
@@ -73,9 +70,9 @@ const LoginScreen = () => {
         await addDoc(collection(db, "users"), {
           email: email,
         })
-          .then(() => console.log("this is the email"))
+          .then(()=>{})
           .catch(() => {
-            console.log("rejected");
+            //console.log("rejected");
           });
 
         navigation.navigate("FMB");

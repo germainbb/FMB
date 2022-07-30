@@ -138,7 +138,7 @@ const Worker = () => {
         </TouchableOpacity>
         <View style={styles.itemBody}>
           <Text style={styles.itemName}>K{item.price}</Text>
-          <TouchableOpacity onPress={()=>personalScreen(item)}>
+          <TouchableOpacity onPress={()=>personalScreen(item.user)}>
             <MaterialIcons name="store" size={24} color="green" />
 
             <Text>stock</Text>

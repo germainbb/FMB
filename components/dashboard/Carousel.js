@@ -26,7 +26,7 @@ return(
         >
           <FontAwesome name="whatsapp" size={45} color="green" />
         </TouchableOpacity>
-        <Text>Advertize here K50/week or k180/month</Text>
+        <Text style={styles.text}>Advertize here K50/week or k180/month</Text>
       </View>
       <View style={[styles.child, { backgroundColor: "thistle" }]}>
         <Text style={styles.text}>2</Text>

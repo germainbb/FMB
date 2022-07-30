@@ -29,34 +29,12 @@ import React, {
   import { MaterialIcons } from "@expo/vector-icons";
   import { FontAwesome } from "@expo/vector-icons";
   import { useSelector, useDispatch } from "react-redux";
-  import { fetchAllPosts } from "../../reduxTK/reducers/PostsSlice";
-  import { auth, db } from "./firebase";
-  import { onSnapshot } from "firebase/firestore";
-  import {
-    orderBy,
-    collection,
-    doc,
-    getDoc,
-    collectionGroup,
-    query,
-    where,
-    getDocs,
-    arrayRemove,
-    arrayUnion,
-    deleteDoc,
-  } from "firebase/firestore";
+
   import { listTab } from "./Names";
   import Loader from "../dashboard/Loader";
   
   const { width, height } = Dimensions.get("window");
   
-  // const listTab = [
-  //   { status: "all" },
-  //   { status: "purple" },
-  //   { status: "green" },
-  //   { status: "red" },
-  //   { status: "black" },
-  // ];
   
   const MyPosts = (props) => {
     const [name, setname] = useState("all");
@@ -82,7 +60,7 @@ import React, {
       setstatusFilter();
     }, []);
   
-    const seller = props.route.params.user
+    const seller = props.route.params
 
 
     const Bringposts = ()=>{
@@ -166,7 +144,7 @@ import React, {
           >
             {item.profileImage != null ? (
             <Loader
-              defaultImageSource={require("../../assets/download3.jpg")}
+              defaultImageSource={require("../../assets/download2.jpg")}
               source={{ uri: item.profileImage }}
               style={styles.itemImage}
               resizeMode="contain"

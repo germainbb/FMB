@@ -46,8 +46,15 @@ import { collection, addDoc } from "firebase/firestore";
 import Advertize from "./components/dashboard/Advertize";
 import Feedback from "./components/dashboard/Feedback";
 import Help from "./components/dashboard/Help";
-import Authnavigation from "./components/login/Authnavigation";
 import CustomDrawer from "./components/dashboard/CustomDrawer";
+//import { useFonts } from 'expo-font';
+import {
+  useFonts,
+  PTSans_400Regular,
+} from '@expo-google-fonts/pt-sans';
+import {
+  setCustomText,
+} from 'react-native-global-props';
 
 
 const Stack = createNativeStackNavigator();
@@ -71,7 +78,25 @@ function MyDrawer(props) {
 export default function App() {
   const [error, seterror] = useState("");
   const [currentuser, setcurrentuser] = useState(null);
+  // const [loaded] = useFonts({
+  //   'PTSans-Regular': require('./assets/PTSans-Regular.ttf'),
+  // });
 
+  const customTextProps = {
+  style: {
+    fontFamily: 'PTSans_400Regular',
+  }
+};
+
+  setCustomText(customTextProps);
+
+  let [fontsLoaded] = useFonts({
+    PTSans_400Regular,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
 
   return (
@@ -139,6 +164,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     flex: 1,
-    //fontFamily: "Nunito_300Light",
+    fontFamily: 'PTSans_400Regular',
   },
 });

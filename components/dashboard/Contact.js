@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import rav from "../../assets/rav4prime.jpg";
 import { Feather } from "@expo/vector-icons";
 import { db } from "../../components/dashboard/firebase";
 import {
@@ -180,7 +179,7 @@ export default function Contact(props) {
           <Button
             style={styles.button}
             color="#ec5990"
-            title="Dne"
+            title="Done"
             onPress={done}
           />
         </TouchableOpacity>

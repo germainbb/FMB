@@ -4,7 +4,7 @@
     "slug": "FMB",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/fmb3.png",
+    "icon": "./assets/fmb2.png",
     "splash": {
       "image": "./assets/fmb3.png",
       "resizeMode": "contain",
@@ -26,7 +26,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/fmb3.png"
+      "favicon": "./assets/fmb2.png"
     }
   }
 }

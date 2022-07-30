@@ -93,7 +93,7 @@ const SearchBar = () => {
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K {item.price}</Text>
-            <TouchableOpacity onPress={() => personalScreen(item)}>
+            <TouchableOpacity onPress={() => personalScreen(item.user)}>
               <MaterialIcons name="store" size={24} color="green" />
 
               <Text>stock</Text>
@@ -164,7 +164,78 @@ const SearchBar = () => {
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K{item.price}</Text>
-            <TouchableOpacity onPress={() => personalScreen(item)}>
+            <TouchableOpacity onPress={() => personalScreen(item.user)}>
+              <MaterialIcons name="store" size={24} color="green" />
+
+              <Text>stock</Text>
+            </TouchableOpacity>
+          </View>
+          <Text numberOfLines={1} style={styles.itemName}>
+            {item.name}
+          </Text>
+          <View
+            style={[
+              styles.itemStatus,
+              {
+                backgroundColor:
+                  item.status === "purple" ? "purple" : "#69c080",
+              },
+            ]}
+          >
+            <Text numberOfLines={2} style={{ fontWeight: "bold" }}>
+              {item.description}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+
+    // filter of the businessname
+    if (
+      item.businessname
+        .toUpperCase()
+        .includes(searchPhrase.toUpperCase().trim().replace(/\s/g, ""))
+    ) {
+      return (
+        <View key={item.key} style={styles.itemContainer}>
+          <View style={styles.profile}>
+            <Image
+              style={styles.profileImage}
+              source={{
+                uri: item.profilepic,
+              }}
+            />
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.businessname}
+            </Text>
+            <Text
+              numberOfLines={2}
+              style={{ marginHorizontal: 3, display: "flex", flex: 1 }}
+            >
+              {item.timestamp.toDate().toLocaleString("en")}
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => largeview(item)}
+            style={styles.itemLogo}
+          >
+            {item.profileImage != null ? (
+              <Loader
+                defaultImageSource={require("../../assets/download2.jpg")}
+                source={{ uri: item.profileImage }}
+                style={styles.itemImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text>No image!</Text>
+            )}
+          </TouchableOpacity>
+          <View style={styles.itemBody}>
+            <Text style={styles.itemName}>K{item.price}</Text>
+            <TouchableOpacity onPress={() => personalScreen(item.user)}>
               <MaterialIcons name="store" size={24} color="green" />
 
               <Text>stock</Text>
@@ -234,7 +305,7 @@ const SearchBar = () => {
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K {item.price}</Text>
-            <TouchableOpacity onPress={() => personalScreen(item)}>
+            <TouchableOpacity onPress={() => personalScreen(item.user)}>
               <MaterialIcons name="store" size={24} color="green" />
 
               <Text>stock</Text>
@@ -303,7 +374,7 @@ const SearchBar = () => {
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K {item.price}</Text>
-            <TouchableOpacity onPress={() => personalScreen(item)}>
+            <TouchableOpacity onPress={() => personalScreen(item.user)}>
               <MaterialIcons name="store" size={24} color="green" />
 
               <Text>stock</Text>

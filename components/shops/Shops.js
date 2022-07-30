@@ -28,22 +28,6 @@ import Largeview from "../dashboard/Largeview";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchAllPosts } from "../../reduxTK/reducers/PostsSlice";
-import { auth, db } from "../../components/dashboard/firebase";
-import { onSnapshot } from "firebase/firestore";
-import {
-  orderBy,
-  collection,
-  doc,
-  getDoc,
-  collectionGroup,
-  query,
-  where,
-  getDocs,
-  arrayRemove,
-  arrayUnion,
-  deleteDoc,
-} from "firebase/firestore";
 import { listTab } from "../dashboard/Names";
 import Loader from "../dashboard/Loader";
 
@@ -139,7 +123,7 @@ const Shops = () => {
           </TouchableOpacity>
           <View style={styles.itemBody}>
             <Text style={styles.itemName}>K{item.price}</Text>
-            <TouchableOpacity onPress={() => personalScreen(item)}>
+            <TouchableOpacity onPress={() => personalScreen(item.user)}>
               <MaterialIcons name="store" size={24} color="green" />
 
               <Text>stock</Text>
@@ -171,26 +155,6 @@ const Shops = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;
   };
 
-  useEffect(() => {
-    const backAction = () => {
-      Alert.alert("Hold on!", "Are you sure you want to EXIT?", [
-        {
-          text: "Cancel",
-          onPress: () => null,
-          style: "cancel",
-        },
-        { text: "YES", onPress: () => BackHandler.exitApp() },
-      ]);
-      return true;
-    };
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove();
-  }, []);
 
   return (
     <View style={{ margin: 5 }}>

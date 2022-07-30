@@ -29,22 +29,6 @@ import Largeview from "./Largeview";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchAllPosts } from "../../reduxTK/reducers/PostsSlice";
-import { auth, db } from "./firebase";
-import { onSnapshot } from "firebase/firestore";
-import {
-  orderBy,
-  collection,
-  doc,
-  getDoc,
-  collectionGroup,
-  query,
-  where,
-  getDocs,
-  arrayRemove,
-  arrayUnion,
-  deleteDoc,
-} from "firebase/firestore";
 import { listTab } from "./Names";
 import Loader from "../dashboard/Loader";
 
@@ -73,7 +57,7 @@ const MyPosts = (props) => {
   const listRef = useRef(null);
   const userid = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
-  //const Posts = useSelector((state) => state.posts.post)
+  const allposts = useSelector((state) => state.posts.post)
   //console.log("this is the state" + Posts)
 
   useEffect(() => {
@@ -82,26 +66,34 @@ const MyPosts = (props) => {
     setstatusFilter();
   }, []);
 
-  const seller = props.route.params.user;
-  const Bringposts = async () => {
-    const posts = query(
-      collection(db, "users", seller, "posts"),
-      orderBy("timestamp", "desc")
-    );
-    const querySnapshot = await getDocs(posts);
-    setRefresh(false);
+  const seller = props.route.params
 
-    const info = [];
-    querySnapshot.docs.map((doc) => {
-      //console.log(doc.id, " => ", doc.data());
-
-      info.push({ key: doc.id, ...doc.data() });
-    });
-    setPosts(info);
+  const Bringposts = () => {
+    setPosts(allposts);
     setDatalist(Posts);
     setshow(false);
-    //dispatch(fetchAllPosts(info))
   };
+
+
+  // const Bringposts = async () => {
+  //   const posts = query(
+  //     collection(db, "users", seller, "posts"),
+  //     orderBy("timestamp", "desc")
+  //   );
+  //   const querySnapshot = await getDocs(posts);
+  //   setRefresh(false);
+
+  //   const info = [];
+  //   querySnapshot.docs.map((doc) => {
+  //     //console.log(doc.id, " => ", doc.data());
+
+  //     info.push({ key: doc.id, ...doc.data() });
+  //   });
+  //   setPosts(info);
+  //   setDatalist(Posts);
+  //   setshow(false);
+  //   //dispatch(fetchAllPosts(info))
+  // };
 
   //console.log("post", Posts)
   const navigation = useNavigation();
@@ -124,6 +116,7 @@ const MyPosts = (props) => {
   };
 
   const renderItem = ({ item }) => {
+    if (item.user === seller){
     return (
       <View key={item.key} style={styles.itemContainer}>
         <View style={styles.profile}>
@@ -183,6 +176,9 @@ const MyPosts = (props) => {
         </View>
       </View>
     );
+  }else{
+    return
+  }
   };
   const separator = () => {
     return <View style={{ height: 1, backgroundColor: "pink" }}></View>;

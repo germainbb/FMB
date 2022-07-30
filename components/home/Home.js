@@ -31,6 +31,7 @@ import Largeview2 from "../dashboard/Largeview2";
 import Largeview3 from "../dashboard/Largeview3";
 import Largeview4 from "../dashboard/Largeview4";
 import Largeview5 from "../dashboard/Largeview5";
+import PasscodeScreen from "../dashboard/PasscodeScreen";
 import Delete from "../dashboard/Delete";
 import Contact from "../dashboard/Contact";
 import Workers from "../Workers/Workers";
@@ -52,6 +53,14 @@ const Dash = () => {
         component={Dashboard}
         options={{
           headerShown: true,
+          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
+        }}
+      />
+      <Stack.Screen
+        name="enter passcode"
+        component={PasscodeScreen}
+        options={{
+          headerShown: false,
           headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
         }}
       />
@@ -101,14 +110,6 @@ const Homer = () => {
           headerShown: false,
         }}
       />
-      {/* <Stack.Screen
-        name="promotions"
-        component={MyPager}
-        options={{
-          headerShown: true,
-          headerStyle: { backgroundColor: "#deb887", height: height * 0.06 },
-        }}
-      /> */}
       <Stack.Screen
         name="myposts1"
         component={myPosts}
